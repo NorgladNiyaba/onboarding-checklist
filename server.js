@@ -50,6 +50,19 @@ function makeClientId(name) {
 
 // ====== API ROUTES ======
 
+// TEMPORARY ADMIN ROUTE: wipe all clients & states
+// Visit /api/admin/reset-all once, then remove this route.
+app.get("/api/admin/reset-all", async (req, res) => {
+  try {
+    await pool.query("DELETE FROM client_states;");
+    await pool.query("DELETE FROM clients;");
+    res.json({ ok: true, message: "All clients and states wiped." });
+  } catch (err) {
+    console.error("Reset failed:", err);
+    res.status(500).json({ error: "Failed to reset" });
+  }
+});
+
 // List all clients
 app.get("/api/clients", async (req, res) => {
   try {
