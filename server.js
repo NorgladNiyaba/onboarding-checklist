@@ -1,11 +1,42 @@
+// server.js
 const express = require("express");
 const path = require("path");
+const { Pool } = require("pg");
 
 const app = express();
 app.use(express.json());
 
-// In-memory store: { [id]: { id, name, state: {taskId: boolean} } }
-const CLIENTS = {};
+// ====== DATABASE SETUP (Supabase Postgres via DATABASE_URL) ======
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  // Supabase Postgres expects SSL; this keeps it happy on Render.
+  ssl:
+    process.env.DATABASE_SSL === "false"
+      ? false
+      : { rejectUnauthorized: false }
+});
+
+// Create tables if they don't exist
+async function initDb() {
+  // Table: clients (id + name)
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS clients (
+      id   TEXT PRIMARY KEY,
+      name TEXT NOT NULL
+    );
+  `);
+
+  // Table: client_states (one JSON state per client)
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS client_states (
+      client_id TEXT PRIMARY KEY REFERENCES clients(id) ON DELETE CASCADE,
+      state     JSONB NOT NULL DEFAULT '{}'::jsonb
+    );
+  `);
+
+  console.log("Database initialized");
+}
 
 function makeClientId(name) {
   return (
@@ -17,64 +48,150 @@ function makeClientId(name) {
   );
 }
 
-// List clients
-app.get("/api/clients", (req, res) => {
-  const list = Object.values(CLIENTS).map(c => ({
-    id: c.id,
-    name: c.name
-  }));
-  res.json(list);
+// ====== API ROUTES ======
+
+// List all clients
+app.get("/api/clients", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id, name FROM clients ORDER BY name ASC"
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching clients:", err);
+    res.status(500).json({ error: "Failed to fetch clients" });
+  }
 });
 
-// Create client (or return existing)
-app.post("/api/clients", (req, res) => {
+// Create a client (or update its name if id already exists)
+app.post("/api/clients", async (req, res) => {
   const { name } = req.body || {};
   if (!name || !name.trim()) {
     return res.status(400).json({ error: "Name is required" });
   }
+
   const id = makeClientId(name);
-  if (!CLIENTS[id]) {
-    CLIENTS[id] = { id, name: name.trim(), state: {} };
-    console.log("Created client:", id, "-", name.trim());
+  const cleanName = name.trim();
+
+  try {
+    const result = await pool.query(
+      `
+      INSERT INTO clients (id, name)
+      VALUES ($1, $2)
+      ON CONFLICT (id) DO UPDATE
+        SET name = EXCLUDED.name
+      RETURNING id, name;
+      `,
+      [id, cleanName]
+    );
+
+    const client = result.rows[0];
+
+    // Ensure there's at least an empty state row for this client
+    await pool.query(
+      `
+      INSERT INTO client_states (client_id, state)
+      VALUES ($1, '{}'::jsonb)
+      ON CONFLICT (client_id) DO NOTHING;
+      `,
+      [client.id]
+    );
+
+    console.log("Created/updated client:", client.id, "-", client.name);
+    res.json(client);
+  } catch (err) {
+    console.error("Error creating client:", err);
+    res.status(500).json({ error: "Failed to create client" });
   }
-  res.json({ id: CLIENTS[id].id, name: CLIENTS[id].name });
 });
 
-// Get checklist state for a client
-app.get("/api/clients/:id/state", (req, res) => {
-  const client = CLIENTS[req.params.id];
-  if (!client) {
-    // If unknown client, just return empty state
-    return res.json({});
+// Get checklist state for a specific client
+app.get("/api/clients/:id/state", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const result = await pool.query(
+      "SELECT state FROM client_states WHERE client_id = $1",
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      // No state saved yet → return empty object
+      return res.json({});
+    }
+
+    res.json(result.rows[0].state || {});
+  } catch (err) {
+    console.error("Error fetching state for client:", id, err);
+    res.status(500).json({ error: "Failed to fetch client state" });
   }
-  res.json(client.state || {});
 });
 
 // Update checklist state for a client
-app.put("/api/clients/:id/state", (req, res) => {
+app.put("/api/clients/:id/state", async (req, res) => {
   const id = req.params.id;
   const state = req.body;
+
   if (typeof state !== "object" || Array.isArray(state)) {
     return res.status(400).json({ error: "State must be an object" });
   }
-  if (!CLIENTS[id]) {
-    // If the client doesn't exist yet, create a basic one
-    CLIENTS[id] = { id, name: id, state: {} };
+
+  try {
+    // Ensure client exists; if not, create it with id as name
+    await pool.query(
+      `
+      INSERT INTO clients (id, name)
+      VALUES ($1, $1)
+      ON CONFLICT (id) DO NOTHING;
+      `,
+      [id]
+    );
+
+    // Upsert state
+    await pool.query(
+      `
+      INSERT INTO client_states (client_id, state)
+      VALUES ($1, $2::jsonb)
+      ON CONFLICT (client_id) DO UPDATE
+        SET state = EXCLUDED.state;
+      `,
+      [id, JSON.stringify(state)]
+    );
+
+    console.log("Updated state for client:", id);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("Error updating state for client:", id, err);
+    res.status(500).json({ error: "Failed to update client state" });
   }
-  CLIENTS[id].state = state;
-  console.log("Updated state for client:", id);
+});
+
+// Simple health check
+app.get("/healthz", (req, res) => {
   res.json({ ok: true });
 });
 
-// Serve static frontend from /public
+// ====== STATIC FRONTEND ======
+
 app.use(express.static(path.join(__dirname, "public")));
 
-// SPA fallback – send index.html for any other route
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+// ====== START SERVER AFTER DB INIT ======
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log("Onboarding checklist server running on port", PORT);
-});
+
+async function start() {
+  try {
+    await initDb();
+    app.listen(PORT, () => {
+      console.log("Onboarding checklist server running on port", PORT);
+    });
+  } catch (err) {
+    console.error("Failed to initialize database:", err);
+    process.exit(1);
+  }
+}
+
+start();
