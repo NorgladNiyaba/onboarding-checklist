@@ -29,7 +29,65 @@
 
     .subtitle {
       color: #4b5563;
-      margin-bottom: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ==== Client bar (multi-client support) ==== */
+    .client-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      background: #ffffff;
+      padding: 0.75rem 1rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .client-label-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: #4b5563;
+    }
+
+    #clientSelect {
+      min-width: 180px;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.4rem;
+      border: 1px solid #d1d5db;
+      background: #f9fafb;
+    }
+
+    .client-add-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    #newClientInput {
+      min-width: 200px;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.4rem;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+    }
+
+    #addClientBtn {
+      padding: 0.3rem 0.7rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-size: 0.85rem;
+      background: #111827;
+      color: #f9fafb;
+      cursor: pointer;
+    }
+
+    #addClientBtn:hover {
+      opacity: 0.9;
     }
 
     .summary-bar {
@@ -258,7 +316,6 @@
 
     .mt-1 { margin-top: 0.25rem; }
     .mt-2 { margin-top: 0.5rem; }
-
   </style>
 </head>
 <body>
@@ -266,6 +323,23 @@
   <h1>Client Onboarding Checklist</h1>
   <div class="subtitle small">
     Internal use only. Checklist ordered by actual onboarding workflow: Phase A (Access) → Phase B (Documents) → Phase C (Presentation & Compliance).
+  </div>
+
+  <!-- Client selector bar -->
+  <div class="client-bar">
+    <div class="client-label-group">
+      <label for="clientSelect">Client:</label>
+      <select id="clientSelect"></select>
+    </div>
+
+    <div class="client-add-group">
+      <input
+        id="newClientInput"
+        type="text"
+        placeholder="Add new client (e.g. ACME Home Care)"
+      />
+      <button id="addClientBtn">Add</button>
+    </div>
   </div>
 
   <div class="summary-bar">
@@ -300,8 +374,8 @@
       <div class="sidebar-card">
         <h2>How to use</h2>
         <p>
-          Work from top to bottom. Complete all items in Phase A before you move heavily into Phase B and C.
-          Progress is saved automatically in this browser using local storage.
+          Add or select a client above. Work from top to bottom. Complete all items in Phase A before you move heavily into Phases B and C.
+          Progress is saved automatically in this browser (per client) using local storage.
         </p>
         <p class="mt-2">
           Use the role filter above to see what’s on your plate (e.g. Fon, Modest, HR, etc.).
@@ -331,7 +405,6 @@
   };
 
   // All tasks from your checklist, grouped by phase A, B, C.
-  // Each item = one "high-level" checkbox, not every bullet point.
   const TASKS = [
     // ==== Phase A – Account Setup & Access (FIRST PRIORITY) ====
     {
@@ -610,19 +683,58 @@
     }
   ];
 
-  const STORAGE_KEY = "onboardingChecklist_v1";
+  // === LocalStorage keys for MULTI-CLIENT support ===
+  const CLIENTS_KEY = "onboardingClients_v1";
+  const CURRENT_CLIENT_KEY = "onboardingCurrentClient_v1";
+  const CHECKLIST_PREFIX = "onboardingChecklist_v1::";
 
-  function loadState() {
+  function makeClientId(name) {
+    return name
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "client";
+  }
+
+  function getClients() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(CLIENTS_KEY);
+      const clients = raw ? JSON.parse(raw) : [];
+      return Array.isArray(clients) ? clients : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveClients(clients) {
+    localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients));
+  }
+
+  function getCurrentClientId() {
+    return localStorage.getItem(CURRENT_CLIENT_KEY) || null;
+  }
+
+  function setCurrentClientId(id) {
+    localStorage.setItem(CURRENT_CLIENT_KEY, id);
+  }
+
+  function getClientStateKey(clientId) {
+    return CHECKLIST_PREFIX + clientId;
+  }
+
+  function loadStateForClient(clientId) {
+    if (!clientId) return {};
+    try {
+      const raw = localStorage.getItem(getClientStateKey(clientId));
       return raw ? JSON.parse(raw) : {};
-    } catch (e) {
+    } catch {
       return {};
     }
   }
 
-  function saveState(state) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  function saveStateForClient(clientId, state) {
+    if (!clientId) return;
+    localStorage.setItem(getClientStateKey(clientId), JSON.stringify(state));
   }
 
   function getPhases() {
@@ -653,18 +765,33 @@
     return task.dependsOn.every(id => state[id]);
   }
 
+  // Render checklist for current client & selected role
   function render(selectedRole = "all") {
+    const clientId = getCurrentClientId();
+    const clients = getClients();
+    const client = clients.find(c => c.id === clientId) || clients[0];
+
+    const state = client ? loadStateForClient(client.id) : {};
     const phasesContainer = document.getElementById("phasesContainer");
-    const state = loadState();
     const phases = getPhases();
     const { total, done, percent } = computeCompletion(state);
 
     // Overall bar
-    document.getElementById("overallText").textContent =
-      `${done} of ${total} tasks completed (${percent}%)`;
-    document.getElementById("overallBar").style.width = percent + "%";
+    const overallText = document.getElementById("overallText");
+    const overallBar = document.getElementById("overallBar");
+
+    if (client) {
+      overallText.textContent =
+        `${done} of ${total} tasks completed (${percent}%) – ${client.name}`;
+    } else {
+      overallText.textContent =
+        "No client selected yet. Add a client above to begin.";
+    }
+    overallBar.style.width = percent + "%";
 
     phasesContainer.innerHTML = "";
+
+    if (!client) return; // nothing else to render
 
     phases.forEach(phase => {
       const phaseTasks = phase.tasks;
@@ -712,9 +839,8 @@
       list.className = "task-list";
 
       phaseTasks.forEach(task => {
-        // Role filter
         if (selectedRole !== "all" && !task.roles.includes(selectedRole)) {
-          return; // skip rendering this task
+          return;
         }
 
         const enabled = isTaskEnabled(task, state);
@@ -728,9 +854,9 @@
         checkbox.disabled = !enabled;
 
         checkbox.addEventListener("change", () => {
-          const newState = loadState();
+          const newState = loadStateForClient(client.id);
           newState[task.id] = checkbox.checked;
-          saveState(newState);
+          saveStateForClient(client.id, newState);
           render(selectedRole);
         });
 
@@ -795,7 +921,71 @@
     });
   }
 
+  function setupClientsUI() {
+    const select = document.getElementById("clientSelect");
+    const input = document.getElementById("newClientInput");
+    const addBtn = document.getElementById("addClientBtn");
+
+    function refreshSelect() {
+      const clients = getClients();
+      const currentId = getCurrentClientId();
+      select.innerHTML = "";
+
+      if (clients.length === 0) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "No clients yet";
+        select.appendChild(opt);
+        return;
+      }
+
+      clients.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.id;
+        opt.textContent = c.name;
+        select.appendChild(opt);
+      });
+
+      const effectiveId = currentId || clients[0].id;
+      setCurrentClientId(effectiveId);
+      select.value = effectiveId;
+    }
+
+    select.addEventListener("change", () => {
+      const id = select.value;
+      setCurrentClientId(id);
+      render();
+    });
+
+    addBtn.addEventListener("click", () => {
+      const name = input.value.trim();
+      if (!name) return;
+      const id = makeClientId(name);
+      const clients = getClients();
+      if (!clients.find(c => c.id === id)) {
+        clients.push({ id, name });
+        saveClients(clients);
+      }
+      setCurrentClientId(id);
+      input.value = "";
+      refreshSelect();
+      render();
+    });
+
+    // Initialize with a default client if none exist
+    let clients = getClients();
+    if (clients.length === 0) {
+      const defaultClient = { id: "demo-client", name: "Demo Client" };
+      clients = [defaultClient];
+      saveClients(clients);
+      setCurrentClientId(defaultClient.id);
+    }
+
+    refreshSelect();
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
+    setupClientsUI();
     setupFilters();
     render("all");
   });
