@@ -316,6 +316,30 @@
 
     .mt-1 { margin-top: 0.25rem; }
     .mt-2 { margin-top: 0.5rem; }
+
+    /* Dashboard table */
+    .dashboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .dashboard-table th,
+    .dashboard-table td {
+      padding: 0.35rem 0.4rem;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    .dashboard-table th {
+      font-weight: 600;
+      color: #4b5563;
+    }
+
+    .dashboard-table tr:last-child td {
+      border-bottom: none;
+    }
   </style>
 </head>
 <body>
@@ -352,6 +376,28 @@
     </div>
   </div>
 
+  <!-- Dashboard card -->
+  <div class="summary-bar">
+    <div class="summary-header">
+      <div class="summary-title">Client Dashboard</div>
+      <div class="summary-percent small" id="dashboardHint">
+        Overview of all clients and their completion.
+      </div>
+    </div>
+    <table class="dashboard-table">
+      <thead>
+        <tr>
+          <th>Client</th>
+          <th>Tasks Done</th>
+          <th>Completion</th>
+        </tr>
+      </thead>
+      <tbody id="dashboardBody">
+        <!-- Filled from JS -->
+      </tbody>
+    </table>
+  </div>
+
   <div class="filters">
     <span class="filter-label">Filter by person/role:</span>
     <button class="chip active" data-role="all">
@@ -375,10 +421,10 @@
         <h2>How to use</h2>
         <p>
           Add or select a client above. Work from top to bottom. Complete all items in Phase A before you move heavily into Phases B and C.
-          Progress is saved automatically in this browser (per client) using local storage.
+          Progress is saved centrally on the server (shared by everyone).
         </p>
         <p class="mt-2">
-          Use the role filter above to see what’s on your plate (e.g. Fon, Modest, HR, etc.).
+          Use the role filter above to see what’s on your plate (e.g. Fon, Modest, HR, etc.). The dashboard shows all clients and their completion %.
         </p>
       </div>
     </aside>
@@ -390,7 +436,8 @@
 </div>
 
 <script>
-  // Mapping of role codes to readable labels (from your key)
+  // ====== CONFIG & DATA ======
+
   const ROLE_LABELS = {
     I: "Internal",
     A: "Accounting Dept",
@@ -404,337 +451,156 @@
     Imp: "Implementation Specialist"
   };
 
-  // All tasks from your checklist, grouped by phase A, B, C.
   const TASKS = [
-    // ==== Phase A – Account Setup & Access (FIRST PRIORITY) ====
-    {
-      id: "A1",
-      phase: "A",
-      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
-      phaseOrder: 1,
+    // ---- Phase A ----
+    { id: "A1", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "WorkDrive & SharePoint Setup",
       description: "Create SharePoint folder, create WorkDrive folder, provide client with access, confirm access.",
-      roles: ["I", "S"],
-      dependsOn: []
-    },
-    {
-      id: "A2",
-      phase: "A",
-      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
-      phaseOrder: 1,
+      roles: ["I", "S"], dependsOn: [] },
+    { id: "A2", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "QBO Access",
       description: "Confirm firm access, assign associates, verify access.",
-      roles: ["I", "M"],
-      dependsOn: []
-    },
-    {
-      id: "A3",
-      phase: "A",
-      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
-      phaseOrder: 1,
+      roles: ["I", "M"], dependsOn: [] },
+    { id: "A3", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "Bank Account Access",
       description: "Confirm bank allows accountant access, Fon creates accountant access, verify access.",
-      roles: ["E", "F"],
-      dependsOn: []
-    },
-    {
-      id: "A4",
-      phase: "A",
-      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
-      phaseOrder: 1,
+      roles: ["E", "F"], dependsOn: [] },
+    { id: "A4", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "ID.me Setup",
       description: "Access client’s ID.me, create account if needed, store details securely.",
-      roles: ["E", "Imp"],
-      dependsOn: []
-    },
-    {
-      id: "A5",
-      phase: "A",
-      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
-      phaseOrder: 1,
+      roles: ["E", "Imp"], dependsOn: [] },
+    { id: "A5", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "ADP Setup",
       description: "Verify client in Accountant Connect, add AM/TL/AE as users, configure GLI, review S-Corp payroll, check HR tools & benefits, introduce ADP rep.",
-      roles: ["B", "Imp"],
-      dependsOn: ["A4"]
-    },
-    {
-      id: "A6",
-      phase: "A",
-      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
-      phaseOrder: 1,
+      roles: ["B", "Imp"], dependsOn: ["A4"] },
+    { id: "A6", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "Time & Attendance System Review",
       description: "Identify current tool, train internal team, determine EVV compliance, explore ADP options if needed.",
-      roles: ["B", "Imp"],
-      dependsOn: ["A5"]
-    },
-    {
-      id: "A7",
-      phase: "A",
-      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
-      phaseOrder: 1,
+      roles: ["B", "Imp"], dependsOn: ["A5"] },
+    { id: "A7", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "Retirement Portal Access",
       description: "Confirm provider, obtain access, review plan type, note contribution responsibilities.",
-      roles: ["B", "Imp"],
-      dependsOn: ["A5"]
-    },
-    {
-      id: "A8",
-      phase: "A",
-      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
-      phaseOrder: 1,
+      roles: ["B", "Imp"], dependsOn: ["A5"] },
+    { id: "A8", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "Health Portal Access / Health Census",
       description: "Confirm insurance plan and obtain portal access, review enrollment process or prepare health census if needed.",
-      roles: ["B", "Imp"],
-      dependsOn: ["A5"]
-    },
-    {
-      id: "A9",
-      phase: "A",
-      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
-      phaseOrder: 1,
+      roles: ["B", "Imp"], dependsOn: ["A5"] },
+    { id: "A9", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "Tax Account Setup",
       description: "Validate SIT & SUI setups, review ADP employee roster (addresses, jurisdictions, names, SSNs, DOB), correct discrepancies.",
-      roles: ["I", "C"],
-      dependsOn: ["A6", "A7", "A8"]
-    },
-    {
-      id: "A10",
-      phase: "A",
-      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
-      phaseOrder: 1,
+      roles: ["I", "C"], dependsOn: ["A6", "A7", "A8"] },
+    { id: "A10", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "POS System Review",
       description: "Identify POS, recommend Clover with ADP if savings exist, determine sales tax filing responsibility and setup if firm handles filings.",
-      roles: ["I", "Imp"],
-      dependsOn: ["A9"]
-    },
-    {
-      id: "A11",
-      phase: "A",
-      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
-      phaseOrder: 1,
+      roles: ["I", "Imp"], dependsOn: ["A9"] },
+    { id: "A11", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "Adobe Sign Setup",
       description: "Confirm existing e-signature tools, recommend Adobe Sign if needed, set up and assign access.",
-      roles: ["B", "M"],
-      dependsOn: ["A5"]
-    },
+      roles: ["B", "M"], dependsOn: ["A5"] },
 
-    // ==== Phase B – Documents to Collect (SECOND PHASE) ====
-    {
-      id: "B1",
-      phase: "B",
-      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
-      phaseOrder: 2,
+    // ---- Phase B ----
+    { id: "B1", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "SS-4 Form",
       description: "Request SS-4; review IRS entity instructions.",
-      roles: ["E", "Imp"],
-      dependsOn: ["A1","A2","A3","A4","A5"]
-    },
-    {
-      id: "B2",
-      phase: "B",
-      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
-      phaseOrder: 2,
+      roles: ["E", "Imp"], dependsOn: ["A1","A2","A3","A4","A5"] },
+    { id: "B2", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Previous Year Personal & Business Taxes",
       description: "Request prior-year tax returns and review for structure, filing status, and income.",
-      roles: ["E", "Imp"],
-      dependsOn: ["B1"]
-    },
-    {
-      id: "B3",
-      phase: "B",
-      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
-      phaseOrder: 2,
+      roles: ["E", "Imp"], dependsOn: ["B1"] },
+    { id: "B3", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Outline of All Income Sources",
       description: "Request list of all income sources and use as categorization framework.",
-      roles: ["E", "Imp"],
-      dependsOn: ["B1"]
-    },
-    {
-      id: "B4",
-      phase: "B",
-      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
-      phaseOrder: 2,
+      roles: ["E", "Imp"], dependsOn: ["B1"] },
+    { id: "B4", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Insurance Policies",
       description: "Collect Workers’ Comp, General Liability, and other relevant policies.",
-      roles: ["E", "Imp"],
-      dependsOn: ["A8"]
-    },
-    {
-      id: "B5",
-      phase: "B",
-      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
-      phaseOrder: 2,
+      roles: ["E", "Imp"], dependsOn: ["A8"] },
+    { id: "B5", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Policies: PTO, Retirement, Health, Holiday",
       description: "Review all policies, determine eligibility rules, educate client if nothing exists, ensure payroll accruals/contributions align.",
-      roles: ["E", "Imp"],
-      dependsOn: ["A7", "A8"]
-    },
-    {
-      id: "B6",
-      phase: "B",
-      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
-      phaseOrder: 2,
+      roles: ["E", "Imp"], dependsOn: ["A7", "A8"] },
+    { id: "B6", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Loan & Mortgage Documentation",
       description: "Request loan & mortgage docs; use for balance sheet accuracy and planning.",
-      roles: ["E", "A"],
-      dependsOn: []
-    },
-    {
-      id: "B7",
-      phase: "B",
-      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
-      phaseOrder: 2,
+      roles: ["E", "A"], dependsOn: [] },
+    { id: "B7", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "W-4 and I-9 Access",
       description: "Collect existing W-4s and I-9s, explore digital tools or ADP I-9 feature, use Adobe Sign if necessary.",
-      roles: ["E", "HR"],
-      dependsOn: ["A5"]
-    },
-    {
-      id: "B8",
-      phase: "B",
-      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
-      phaseOrder: 2,
+      roles: ["E", "HR"], dependsOn: ["A5"] },
+    { id: "B8", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Employee Handbook Questionnaire",
       description: "Collect questionnaire and existing handbook, reconcile with ADP Handbook Wizard, prepare first version.",
-      roles: ["E", "HR"],
-      dependsOn: ["B7"]
-    },
-    {
-      id: "B9",
-      phase: "B",
-      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
-      phaseOrder: 2,
+      roles: ["E", "HR"], dependsOn: ["B7"] },
+    { id: "B9", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Employment Forms",
       description: "Collect job descriptions, offer letters, employee and contractor agreements, and identify improvements.",
-      roles: ["E", "HR"],
-      dependsOn: ["B7"]
-    },
+      roles: ["E", "HR"], dependsOn: ["B7"] },
 
-    // ==== Phase C – Presentation & Compliance (FINAL PHASE) ====
-    {
-      id: "C1",
-      phase: "C",
-      phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)",
-      phaseOrder: 3,
+    // ---- Phase C ----
+    { id: "C1", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "WorkDrive Usage & Folder Structure",
       description: "Train client on folder structure, confirm portal usage, encourage bookmarking.",
-      roles: ["E", "Imp"],
-      dependsOn: ["A1","B1","B2","B3"]
-    },
-    {
-      id: "C2",
-      phase: "C",
-      phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)",
-      phaseOrder: 3,
+      roles: ["E", "Imp"], dependsOn: ["A1","B1","B2","B3"] },
+    { id: "C2", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "Compliance Folder Review",
       description: "Present compliance folder (minimum wage, overtime, retirement mandates, PTO, PFML, workers’ comp, FLSA thresholds, posters). Educate and identify improvements.",
-      roles: ["E", "Imp"],
-      dependsOn: ["A9","B5"]
-    },
-    {
-      id: "C3",
-      phase: "C",
-      phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)",
-      phaseOrder: 3,
+      roles: ["E", "Imp"], dependsOn: ["A9","B5"] },
+    { id: "C3", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "Accounting Best Practices",
       description: "Present accounting SOPs, review habits and workflows, align expectations.",
-      roles: ["E", "Imp"],
-      dependsOn: ["A2","B2","B3","B6"]
-    },
-    {
-      id: "C4",
-      phase: "C",
-      phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)",
-      phaseOrder: 3,
+      roles: ["E", "Imp"], dependsOn: ["A2","B2","B3","B6"] },
+    { id: "C4", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "Employee Onboarding Documents",
       description: "Present onboarding packet, agree on what employees must sign, finalize onboarding process.",
-      roles: ["E", "Imp"],
-      dependsOn: ["B7","B8","B9"]
-    },
-    {
-      id: "C5",
-      phase: "C",
-      phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)",
-      phaseOrder: 3,
+      roles: ["E", "Imp"], dependsOn: ["B7","B8","B9"] },
+    { id: "C5", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "Job Aids",
       description: "Provide job aids and confirm understanding.",
-      roles: ["E", "Imp"],
-      dependsOn: ["C3","C4"]
-    },
-    {
-      id: "C6",
-      phase: "C",
-      phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)",
-      phaseOrder: 3,
+      roles: ["E", "Imp"], dependsOn: ["C3","C4"] },
+    { id: "C6", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "Organizational Chart",
       description: "Prepare org chart and confirm roles and reporting lines.",
-      roles: ["E", "Imp"],
-      dependsOn: []
-    },
-    {
-      id: "C7",
-      phase: "C",
-      phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)",
-      phaseOrder: 3,
+      roles: ["E", "Imp"], dependsOn: [] },
+    { id: "C7", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "Reports Review",
       description: "Review Weekly Accomplishments, Daily Visits, Payroll Analysis, and Savings Tracker with client.",
-      roles: ["E", "Imp"],
-      dependsOn: ["C3"]
-    }
+      roles: ["E", "Imp"], dependsOn: ["C3"] }
   ];
 
-  // === LocalStorage keys for MULTI-CLIENT support ===
-  const CLIENTS_KEY = "onboardingClients_v1";
-  const CURRENT_CLIENT_KEY = "onboardingCurrentClient_v1";
-  const CHECKLIST_PREFIX = "onboardingChecklist_v1::";
+  // ====== STATE (front-end) ======
 
-  function makeClientId(name) {
-    return name
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "") || "client";
+  let currentClientId = null;
+  let currentClientName = "";
+  let currentState = {};          // { taskId: true/false }
+  let clientsCache = [];          // [{id, name}]
+  let currentRoleFilter = "all";
+
+  // ====== HELPERS ======
+
+  async function apiGet(path) {
+    const res = await fetch(path);
+    if (!res.ok) throw new Error("GET " + path + " failed");
+    return res.json();
   }
 
-  function getClients() {
-    try {
-      const raw = localStorage.getItem(CLIENTS_KEY);
-      const clients = raw ? JSON.parse(raw) : [];
-      return Array.isArray(clients) ? clients : [];
-    } catch {
-      return [];
-    }
+  async function apiPost(path, data) {
+    const res = await fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data || {})
+    });
+    if (!res.ok) throw new Error("POST " + path + " failed");
+    return res.json();
   }
 
-  function saveClients(clients) {
-    localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients));
-  }
-
-  function getCurrentClientId() {
-    return localStorage.getItem(CURRENT_CLIENT_KEY) || null;
-  }
-
-  function setCurrentClientId(id) {
-    localStorage.setItem(CURRENT_CLIENT_KEY, id);
-  }
-
-  function getClientStateKey(clientId) {
-    return CHECKLIST_PREFIX + clientId;
-  }
-
-  function loadStateForClient(clientId) {
-    if (!clientId) return {};
-    try {
-      const raw = localStorage.getItem(getClientStateKey(clientId));
-      return raw ? JSON.parse(raw) : {};
-    } catch {
-      return {};
-    }
-  }
-
-  function saveStateForClient(clientId, state) {
-    if (!clientId) return;
-    localStorage.setItem(getClientStateKey(clientId), JSON.stringify(state));
+  async function apiPut(path, data) {
+    const res = await fetch(path, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data || {})
+    });
+    if (!res.ok) throw new Error("PUT " + path + " failed");
+    return res.json();
   }
 
   function getPhases() {
@@ -765,38 +631,33 @@
     return task.dependsOn.every(id => state[id]);
   }
 
-  // Render checklist for current client & selected role
-  function render(selectedRole = "all") {
-    const clientId = getCurrentClientId();
-    const clients = getClients();
-    const client = clients.find(c => c.id === clientId) || clients[0];
+  // ====== RENDERING ======
 
-    const state = client ? loadStateForClient(client.id) : {};
+  function render(role = currentRoleFilter) {
+    currentRoleFilter = role;
     const phasesContainer = document.getElementById("phasesContainer");
     const phases = getPhases();
-    const { total, done, percent } = computeCompletion(state);
+    const { total, done, percent } = computeCompletion(currentState);
 
-    // Overall bar
     const overallText = document.getElementById("overallText");
     const overallBar = document.getElementById("overallBar");
 
-    if (client) {
+    if (currentClientId) {
       overallText.textContent =
-        `${done} of ${total} tasks completed (${percent}%) – ${client.name}`;
+        `${done} of ${total} tasks completed (${percent}%) – ${currentClientName}`;
     } else {
-      overallText.textContent =
-        "No client selected yet. Add a client above to begin.";
+      overallText.textContent = "No client selected yet. Add a client above to begin.";
     }
     overallBar.style.width = percent + "%";
 
     phasesContainer.innerHTML = "";
 
-    if (!client) return; // nothing else to render
+    if (!currentClientId) return;
 
     phases.forEach(phase => {
       const phaseTasks = phase.tasks;
       const totalPhase = phaseTasks.length;
-      const donePhase = phaseTasks.filter(t => state[t.id]).length;
+      const donePhase = phaseTasks.filter(t => currentState[t.id]).length;
       const phasePercent = totalPhase === 0 ? 0 : Math.round((donePhase / totalPhase) * 100);
 
       const phaseCard = document.createElement("section");
@@ -839,25 +700,31 @@
       list.className = "task-list";
 
       phaseTasks.forEach(task => {
-        if (selectedRole !== "all" && !task.roles.includes(selectedRole)) {
+        if (role !== "all" && !task.roles.includes(role)) {
           return;
         }
 
-        const enabled = isTaskEnabled(task, state);
+        const enabled = isTaskEnabled(task, currentState);
         const li = document.createElement("li");
         li.className = "task" + (enabled ? "" : " disabled");
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.className = "task-checkbox";
-        checkbox.checked = !!state[task.id];
+        checkbox.checked = !!currentState[task.id];
         checkbox.disabled = !enabled;
 
-        checkbox.addEventListener("change", () => {
-          const newState = loadStateForClient(client.id);
-          newState[task.id] = checkbox.checked;
-          saveStateForClient(client.id, newState);
-          render(selectedRole);
+        checkbox.addEventListener("change", async () => {
+          currentState[task.id] = checkbox.checked;
+          if (currentClientId) {
+            try {
+              await apiPut(`/api/clients/${encodeURIComponent(currentClientId)}/state`, currentState);
+              render(role);
+              refreshDashboard();
+            } catch (e) {
+              console.error(e);
+            }
+          }
         });
 
         const left = document.createElement("div");
@@ -909,6 +776,54 @@
     });
   }
 
+  async function refreshDashboard() {
+    const tbody = document.getElementById("dashboardBody");
+    tbody.innerHTML = "";
+
+    if (!clientsCache || clientsCache.length === 0) {
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 3;
+      td.textContent = "No clients yet.";
+      tbody.appendChild(tr);
+      tr.appendChild(td);
+      return;
+    }
+
+    const rows = await Promise.all(
+      clientsCache.map(async (client) => {
+        try {
+          const state = await apiGet(`/api/clients/${encodeURIComponent(client.id)}/state`);
+          const { total, done, percent } = computeCompletion(state || {});
+          return { client, total, done, percent };
+        } catch (e) {
+          console.error(e);
+          return { client, total: TASKS.length, done: 0, percent: 0 };
+        }
+      })
+    );
+
+    rows.forEach(row => {
+      const tr = document.createElement("tr");
+
+      const nameTd = document.createElement("td");
+      nameTd.textContent = row.client.name;
+
+      const doneTd = document.createElement("td");
+      doneTd.textContent = `${row.done}/${row.total}`;
+
+      const pctTd = document.createElement("td");
+      pctTd.textContent = `${row.percent}%`;
+
+      tr.appendChild(nameTd);
+      tr.appendChild(doneTd);
+      tr.appendChild(pctTd);
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ====== UI SETUP ======
+
   function setupFilters() {
     const chips = document.querySelectorAll(".chip");
     chips.forEach(chip => {
@@ -921,73 +836,117 @@
     });
   }
 
-  function setupClientsUI() {
+  async function setupClientsUI() {
     const select = document.getElementById("clientSelect");
     const input = document.getElementById("newClientInput");
     const addBtn = document.getElementById("addClientBtn");
 
-    function refreshSelect() {
-      const clients = getClients();
-      const currentId = getCurrentClientId();
+    async function loadClients() {
+      try {
+        const clients = await apiGet("/api/clients");
+        clientsCache = clients;
+      } catch (e) {
+        console.error(e);
+        clientsCache = [];
+      }
+    }
+
+    function populateSelect() {
       select.innerHTML = "";
 
-      if (clients.length === 0) {
+      if (!clientsCache || clientsCache.length === 0) {
         const opt = document.createElement("option");
         opt.value = "";
         opt.textContent = "No clients yet";
         select.appendChild(opt);
+        currentClientId = null;
+        currentClientName = "";
         return;
       }
 
-      clients.forEach(c => {
+      clientsCache.forEach(c => {
         const opt = document.createElement("option");
         opt.value = c.id;
         opt.textContent = c.name;
         select.appendChild(opt);
       });
 
-      const effectiveId = currentId || clients[0].id;
-      setCurrentClientId(effectiveId);
-      select.value = effectiveId;
+      if (!currentClientId || !clientsCache.find(c => c.id === currentClientId)) {
+        currentClientId = clientsCache[0].id;
+        currentClientName = clientsCache[0].name;
+      }
+
+      select.value = currentClientId;
     }
 
-    select.addEventListener("change", () => {
-      const id = select.value;
-      setCurrentClientId(id);
+    async function loadStateForCurrentClient() {
+      if (!currentClientId) {
+        currentState = {};
+        render();
+        return;
+      }
+      try {
+        const state = await apiGet(`/api/clients/${encodeURIComponent(currentClientId)}/state`);
+        currentState = state || {};
+      } catch (e) {
+        console.error(e);
+        currentState = {};
+      }
       render();
+    }
+
+    select.addEventListener("change", async () => {
+      const id = select.value;
+      const client = clientsCache.find(c => c.id === id);
+      currentClientId = client ? client.id : null;
+      currentClientName = client ? client.name : "";
+      await loadStateForCurrentClient();
     });
 
-    addBtn.addEventListener("click", () => {
+    addBtn.addEventListener("click", async () => {
       const name = input.value.trim();
       if (!name) return;
-      const id = makeClientId(name);
-      const clients = getClients();
-      if (!clients.find(c => c.id === id)) {
-        clients.push({ id, name });
-        saveClients(clients);
+      try {
+        const created = await apiPost("/api/clients", { name });
+        input.value = "";
+        await loadClients();
+        currentClientId = created.id;
+        currentClientName = created.name;
+        populateSelect();
+        await loadStateForCurrentClient();
+        await refreshDashboard();
+      } catch (e) {
+        console.error(e);
       }
-      setCurrentClientId(id);
-      input.value = "";
-      refreshSelect();
-      render();
     });
 
-    // Initialize with a default client if none exist
-    let clients = getClients();
-    if (clients.length === 0) {
-      const defaultClient = { id: "demo-client", name: "Demo Client" };
-      clients = [defaultClient];
-      saveClients(clients);
-      setCurrentClientId(defaultClient.id);
+    // Initial load
+    await loadClients();
+
+    // If no clients at all, create a demo one
+    if (!clientsCache || clientsCache.length === 0) {
+      try {
+        const demo = await apiPost("/api/clients", { name: "Demo Client" });
+        clientsCache = [demo];
+      } catch (e) {
+        console.error(e);
+      }
     }
 
-    refreshSelect();
+    // Final refresh after possible demo creation
+    await loadClients();
+    if (clientsCache.length > 0) {
+      currentClientId = clientsCache[0].id;
+      currentClientName = clientsCache[0].name;
+    }
+    populateSelect();
+    await loadStateForCurrentClient();
+    await refreshDashboard();
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    setupClientsUI();
+  document.addEventListener("DOMContentLoaded", async () => {
     setupFilters();
-    render("all");
+    await setupClientsUI();
   });
 </script>
 </body>
