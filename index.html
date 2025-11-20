@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Client Onboarding Checklist</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f5f5f7;
+      color: #111827;
+    }
+
+    .app {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #4b5563;
+      margin-bottom: 1.25rem;
+    }
+
+    .summary-bar {
+      background: #ffffff;
+      padding: 1rem 1.25rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 12px rgba(15,23,42,0.06);
+      margin-bottom: 1rem;
+    }
+
+    .summary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .summary-title {
+      font-weight: 600;
+    }
+
+    .summary-percent {
+      font-size: 0.95rem;
+      color: #374151;
+    }
+
+    .progress {
+      margin-top: 0.5rem;
+      height: 0.6rem;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+    }
+
+    .progress-inner {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: #3b82f6;
+      transition: width 0.2s ease-out;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .filter-label {
+      font-size: 0.9rem;
+      color: #4b5563;
+      margin-right: 0.25rem;
+    }
+
+    .chip {
+      border: 1px solid #d1d5db;
+      border-radius: 999px;
+      padding: 0.25rem 0.65rem;
+      font-size: 0.8rem;
+      background: #ffffff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .chip.active {
+      background: #111827;
+      color: #f9fafb;
+      border-color: #111827;
+    }
+
+    .chip span {
+      font-weight: 600;
+    }
+
+    .layout {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    @media (min-width: 900px) {
+      .layout {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+      .sidebar {
+        width: 260px;
+        position: sticky;
+        top: 1rem;
+        align-self: flex-start;
+      }
+      .main {
+        flex: 1;
+      }
+    }
+
+    .sidebar-card {
+      background: #111827;
+      color: #e5e7eb;
+      padding: 1rem 1.25rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 14px rgba(15,23,42,0.5);
+    }
+
+    .sidebar-card h2 {
+      font-size: 1rem;
+      margin: 0 0 0.5rem;
+      color: #f9fafb;
+    }
+
+    .sidebar-card p {
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    .phase-card {
+      background: #ffffff;
+      border-radius: 0.9rem;
+      padding: 1rem 1.25rem;
+      box-shadow: 0 4px 12px rgba(15,23,42,0.05);
+      margin-bottom: 1rem;
+    }
+
+    .phase-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .phase-title {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .phase-subtitle {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    .phase-progress {
+      font-size: 0.8rem;
+      color: #4b5563;
+    }
+
+    .phase-progress strong {
+      font-weight: 600;
+    }
+
+    .task-list {
+      margin: 0.4rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .task {
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-start;
+      padding: 0.5rem 0.1rem;
+      border-top: 1px solid #f3f4f6;
+    }
+
+    .task:first-child {
+      border-top: none;
+    }
+
+    .task.disabled {
+      opacity: 0.45;
+    }
+
+    .task-checkbox {
+      margin-top: 0.1rem;
+    }
+
+    .task-main {
+      flex: 1;
+    }
+
+    .task-title {
+      font-size: 0.92rem;
+      font-weight: 500;
+      margin-bottom: 0.15rem;
+    }
+
+    .task-description {
+      font-size: 0.82rem;
+      color: #6b7280;
+      margin-bottom: 0.2rem;
+    }
+
+    .task-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      align-items: center;
+    }
+
+    .pill {
+      font-size: 0.7rem;
+      padding: 0.12rem 0.45rem;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: #f9fafb;
+      color: #374151;
+    }
+
+    .pill-ghost {
+      border-style: dashed;
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .small {
+      font-size: 0.8rem;
+    }
+
+    .mt-1 { margin-top: 0.25rem; }
+    .mt-2 { margin-top: 0.5rem; }
+
+  </style>
+</head>
+<body>
+<div class="app">
+  <h1>Client Onboarding Checklist</h1>
+  <div class="subtitle small">
+    Internal use only. Checklist ordered by actual onboarding workflow: Phase A (Access) → Phase B (Documents) → Phase C (Presentation & Compliance).
+  </div>
+
+  <div class="summary-bar">
+    <div class="summary-header">
+      <div class="summary-title">Overall Progress</div>
+      <div class="summary-percent" id="overallText"></div>
+    </div>
+    <div class="progress">
+      <div class="progress-inner" id="overallBar"></div>
+    </div>
+  </div>
+
+  <div class="filters">
+    <span class="filter-label">Filter by person/role:</span>
+    <button class="chip active" data-role="all">
+      <span>All</span>
+    </button>
+    <button class="chip" data-role="I"><span>I</span>Internal</button>
+    <button class="chip" data-role="A"><span>A</span>Accounting</button>
+    <button class="chip" data-role="E"><span>E</span>External</button>
+    <button class="chip" data-role="HR"><span>HR</span>HR (TL/AE/AM)</button>
+    <button class="chip" data-role="B"><span>B</span>Both Int/Ext</button>
+    <button class="chip" data-role="C"><span>C</span>Compliance</button>
+    <button class="chip" data-role="S"><span>S</span>Siril</button>
+    <button class="chip" data-role="F"><span>F</span>Fon</button>
+    <button class="chip" data-role="M"><span>M</span>Modest</button>
+    <button class="chip" data-role="Imp"><span>Imp</span>Implementation</button>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h2>How to use</h2>
+        <p>
+          Work from top to bottom. Complete all items in Phase A before you move heavily into Phase B and C.
+          Progress is saved automatically in this browser using local storage.
+        </p>
+        <p class="mt-2">
+          Use the role filter above to see what’s on your plate (e.g. Fon, Modest, HR, etc.).
+        </p>
+      </div>
+    </aside>
+
+    <main class="main" id="phasesContainer">
+      <!-- Phases will be rendered here -->
+    </main>
+  </div>
+</div>
+
+<script>
+  // Mapping of role codes to readable labels (from your key)
+  const ROLE_LABELS = {
+    I: "Internal",
+    A: "Accounting Dept",
+    E: "External",
+    HR: "HR (TL/AE/AM)",
+    B: "Both Internal & External",
+    C: "Compliance",
+    S: "Siril",
+    F: "Fon",
+    M: "Modest",
+    Imp: "Implementation Specialist"
+  };
+
+  // All tasks from your checklist, grouped by phase A, B, C.
+  // Each item = one "high-level" checkbox, not every bullet point.
+  const TASKS = [
+    // ==== Phase A – Account Setup & Access (FIRST PRIORITY) ====
+    {
+      id: "A1",
+      phase: "A",
+      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
+      phaseOrder: 1,
+      title: "WorkDrive & SharePoint Setup",
+      description: "Create SharePoint folder, create WorkDrive folder, provide client with access, confirm access.",
+      roles: ["I", "S"],
+      dependsOn: []
+    },
+    {
+      id: "A2",
+      phase: "A",
+      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
+      phaseOrder: 1,
+      title: "QBO Access",
+      description: "Confirm firm access, assign associates, verify access.",
+      roles: ["I", "M"],
+      dependsOn: []
+    },
+    {
+      id: "A3",
+      phase: "A",
+      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
+      phaseOrder: 1,
+      title: "Bank Account Access",
+      description: "Confirm bank allows accountant access, Fon creates accountant access, verify access.",
+      roles: ["E", "F"],
+      dependsOn: []
+    },
+    {
+      id: "A4",
+      phase: "A",
+      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
+      phaseOrder: 1,
+      title: "ID.me Setup",
+      description: "Access client’s ID.me, create account if needed, store details securely.",
+      roles: ["E", "Imp"],
+      dependsOn: []
+    },
+    {
+      id: "A5",
+      phase: "A",
+      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
+      phaseOrder: 1,
+      title: "ADP Setup",
+      description: "Verify client in Accountant Connect, add AM/TL/AE as users, configure GLI, review S-Corp payroll, check HR tools & benefits, introduce ADP rep.",
+      roles: ["B", "Imp"],
+      dependsOn: ["A4"]
+    },
+    {
+      id: "A6",
+      phase: "A",
+      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
+      phaseOrder: 1,
+      title: "Time & Attendance System Review",
+      description: "Identify current tool, train internal team, determine EVV compliance, explore ADP options if needed.",
+      roles: ["B", "Imp"],
+      dependsOn: ["A5"]
+    },
+    {
+      id: "A7",
+      phase: "A",
+      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
+      phaseOrder: 1,
+      title: "Retirement Portal Access",
+      description: "Confirm provider, obtain access, review plan type, note contribution responsibilities.",
+      roles: ["B", "Imp"],
+      dependsOn: ["A5"]
+    },
+    {
+      id: "A8",
+      phase: "A",
+      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
+      phaseOrder: 1,
+      title: "Health Portal Access / Health Census",
+      description: "Confirm insurance plan and obtain portal access, review enrollment process or prepare health census if needed.",
+      roles: ["B", "Imp"],
+      dependsOn: ["A5"]
+    },
+    {
+      id: "A9",
+      phase: "A",
+      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
+      phaseOrder: 1,
+      title: "Tax Account Setup",
+      description: "Validate SIT & SUI setups, review ADP employee roster (addresses, jurisdictions, names, SSNs, DOB), correct discrepancies.",
+      roles: ["I", "C"],
+      dependsOn: ["A6", "A7", "A8"]
+    },
+    {
+      id: "A10",
+      phase: "A",
+      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
+      phaseOrder: 1,
+      title: "POS System Review",
+      description: "Identify POS, recommend Clover with ADP if savings exist, determine sales tax filing responsibility and setup if firm handles filings.",
+      roles: ["I", "Imp"],
+      dependsOn: ["A9"]
+    },
+    {
+      id: "A11",
+      phase: "A",
+      phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)",
+      phaseOrder: 1,
+      title: "Adobe Sign Setup",
+      description: "Confirm existing e-signature tools, recommend Adobe Sign if needed, set up and assign access.",
+      roles: ["B", "M"],
+      dependsOn: ["A5"]
+    },
+
+    // ==== Phase B – Documents to Collect (SECOND PHASE) ====
+    {
+      id: "B1",
+      phase: "B",
+      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
+      phaseOrder: 2,
+      title: "SS-4 Form",
+      description: "Request SS-4; review IRS entity instructions.",
+      roles: ["E", "Imp"],
+      dependsOn: ["A1","A2","A3","A4","A5"]
+    },
+    {
+      id: "B2",
+      phase: "B",
+      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
+      phaseOrder: 2,
+      title: "Previous Year Personal & Business Taxes",
+      description: "Request prior-year tax returns and review for structure, filing status, and income.",
+      roles: ["E", "Imp"],
+      dependsOn: ["B1"]
+    },
+    {
+      id: "B3",
+      phase: "B",
+      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
+      phaseOrder: 2,
+      title: "Outline of All Income Sources",
+      description: "Request list of all income sources and use as categorization framework.",
+      roles: ["E", "Imp"],
+      dependsOn: ["B1"]
+    },
+    {
+      id: "B4",
+      phase: "B",
+      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
+      phaseOrder: 2,
+      title: "Insurance Policies",
+      description: "Collect Workers’ Comp, General Liability, and other relevant policies.",
+      roles: ["E", "Imp"],
+      dependsOn: ["A8"]
+    },
+    {
+      id: "B5",
+      phase: "B",
+      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
+      phaseOrder: 2,
+      title: "Policies: PTO, Retirement, Health, Holiday",
+      description: "Review all policies, determine eligibility rules, educate client if nothing exists, ensure payroll accruals/contributions align.",
+      roles: ["E", "Imp"],
+      dependsOn: ["A7", "A8"]
+    },
+    {
+      id: "B6",
+      phase: "B",
+      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
+      phaseOrder: 2,
+      title: "Loan & Mortgage Documentation",
+      description: "Request loan & mortgage docs; use for balance sheet accuracy and planning.",
+      roles: ["E", "A"],
+      dependsOn: []
+    },
+    {
+      id: "B7",
+      phase: "B",
+      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
+      phaseOrder: 2,
+      title: "W-4 and I-9 Access",
+      description: "Collect existing W-4s and I-9s, explore digital tools or ADP I-9 feature, use Adobe Sign if necessary.",
+      roles: ["E", "HR"],
+      dependsOn: ["A5"]
+    },
+    {
+      id: "B8",
+      phase: "B",
+      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
+      phaseOrder: 2,
+      title: "Employee Handbook Questionnaire",
+      description: "Collect questionnaire and existing handbook, reconcile with ADP Handbook Wizard, prepare first version.",
+      roles: ["E", "HR"],
+      dependsOn: ["B7"]
+    },
+    {
+      id: "B9",
+      phase: "B",
+      phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)",
+      phaseOrder: 2,
+      title: "Employment Forms",
+      description: "Collect job descriptions, offer letters, employee and contractor agreements, and identify improvements.",
+      roles: ["E", "HR"],
+      dependsOn: ["B7"]
+    },
+
+    // ==== Phase C – Presentation & Compliance (FINAL PHASE) ====
+    {
+      id: "C1",
+      phase: "C",
+      phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)",
+      phaseOrder: 3,
+      title: "WorkDrive Usage & Folder Structure",
+      description: "Train client on folder structure, confirm portal usage, encourage bookmarking.",
+      roles: ["E", "Imp"],
+      dependsOn: ["A1","B1","B2","B3"]
+    },
+    {
+      id: "C2",
+      phase: "C",
+      phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)",
+      phaseOrder: 3,
+      title: "Compliance Folder Review",
+      description: "Present compliance folder (minimum wage, overtime, retirement mandates, PTO, PFML, workers’ comp, FLSA thresholds, posters). Educate and identify improvements.",
+      roles: ["E", "Imp"],
+      dependsOn: ["A9","B5"]
+    },
+    {
+      id: "C3",
+      phase: "C",
+      phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)",
+      phaseOrder: 3,
+      title: "Accounting Best Practices",
+      description: "Present accounting SOPs, review habits and workflows, align expectations.",
+      roles: ["E", "Imp"],
+      dependsOn: ["A2","B2","B3","B6"]
+    },
+    {
+      id: "C4",
+      phase: "C",
+      phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)",
+      phaseOrder: 3,
+      title: "Employee Onboarding Documents",
+      description: "Present onboarding packet, agree on what employees must sign, finalize onboarding process.",
+      roles: ["E", "Imp"],
+      dependsOn: ["B7","B8","B9"]
+    },
+    {
+      id: "C5",
+      phase: "C",
+      phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)",
+      phaseOrder: 3,
+      title: "Job Aids",
+      description: "Provide job aids and confirm understanding.",
+      roles: ["E", "Imp"],
+      dependsOn: ["C3","C4"]
+    },
+    {
+      id: "C6",
+      phase: "C",
+      phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)",
+      phaseOrder: 3,
+      title: "Organizational Chart",
+      description: "Prepare org chart and confirm roles and reporting lines.",
+      roles: ["E", "Imp"],
+      dependsOn: []
+    },
+    {
+      id: "C7",
+      phase: "C",
+      phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)",
+      phaseOrder: 3,
+      title: "Reports Review",
+      description: "Review Weekly Accomplishments, Daily Visits, Payroll Analysis, and Savings Tracker with client.",
+      roles: ["E", "Imp"],
+      dependsOn: ["C3"]
+    }
+  ];
+
+  const STORAGE_KEY = "onboardingChecklist_v1";
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveState(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function getPhases() {
+    const map = {};
+    for (const task of TASKS) {
+      if (!map[task.phase]) {
+        map[task.phase] = {
+          id: task.phase,
+          title: task.phaseTitle,
+          order: task.phaseOrder,
+          tasks: []
+        };
+      }
+      map[task.phase].tasks.push(task);
+    }
+    return Object.values(map).sort((a, b) => a.order - b.order);
+  }
+
+  function computeCompletion(state) {
+    const total = TASKS.length;
+    const done = TASKS.filter(t => state[t.id]).length;
+    const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+    return { total, done, percent };
+  }
+
+  function isTaskEnabled(task, state) {
+    if (!task.dependsOn || task.dependsOn.length === 0) return true;
+    return task.dependsOn.every(id => state[id]);
+  }
+
+  function render(selectedRole = "all") {
+    const phasesContainer = document.getElementById("phasesContainer");
+    const state = loadState();
+    const phases = getPhases();
+    const { total, done, percent } = computeCompletion(state);
+
+    // Overall bar
+    document.getElementById("overallText").textContent =
+      `${done} of ${total} tasks completed (${percent}%)`;
+    document.getElementById("overallBar").style.width = percent + "%";
+
+    phasesContainer.innerHTML = "";
+
+    phases.forEach(phase => {
+      const phaseTasks = phase.tasks;
+      const totalPhase = phaseTasks.length;
+      const donePhase = phaseTasks.filter(t => state[t.id]).length;
+      const phasePercent = totalPhase === 0 ? 0 : Math.round((donePhase / totalPhase) * 100);
+
+      const phaseCard = document.createElement("section");
+      phaseCard.className = "phase-card";
+
+      const header = document.createElement("div");
+      header.className = "phase-header";
+
+      const titleWrap = document.createElement("div");
+      const titleEl = document.createElement("div");
+      titleEl.className = "phase-title";
+      titleEl.textContent = phase.title;
+      const subtitle = document.createElement("div");
+      subtitle.className = "phase-subtitle";
+      if (phase.id === "A") {
+        subtitle.textContent = "Foundation: access, payroll, portals & core systems.";
+      } else if (phase.id === "B") {
+        subtitle.textContent = "Collect all documents and data from client.";
+      } else if (phase.id === "C") {
+        subtitle.textContent = "Present structure, best practices, and compliance to client.";
+      }
+      titleWrap.appendChild(titleEl);
+      titleWrap.appendChild(subtitle);
+
+      const phaseProg = document.createElement("div");
+      phaseProg.className = "phase-progress";
+      phaseProg.innerHTML = `<strong>${donePhase}/${totalPhase}</strong> (${phasePercent}%)`;
+
+      header.appendChild(titleWrap);
+      header.appendChild(phaseProg);
+
+      const bar = document.createElement("div");
+      bar.className = "progress mt-1";
+      const inner = document.createElement("div");
+      inner.className = "progress-inner";
+      inner.style.width = phasePercent + "%";
+      bar.appendChild(inner);
+
+      const list = document.createElement("ul");
+      list.className = "task-list";
+
+      phaseTasks.forEach(task => {
+        // Role filter
+        if (selectedRole !== "all" && !task.roles.includes(selectedRole)) {
+          return; // skip rendering this task
+        }
+
+        const enabled = isTaskEnabled(task, state);
+        const li = document.createElement("li");
+        li.className = "task" + (enabled ? "" : " disabled");
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "task-checkbox";
+        checkbox.checked = !!state[task.id];
+        checkbox.disabled = !enabled;
+
+        checkbox.addEventListener("change", () => {
+          const newState = loadState();
+          newState[task.id] = checkbox.checked;
+          saveState(newState);
+          render(selectedRole);
+        });
+
+        const left = document.createElement("div");
+        left.appendChild(checkbox);
+
+        const main = document.createElement("div");
+        main.className = "task-main";
+
+        const title = document.createElement("div");
+        title.className = "task-title";
+        title.textContent = task.title;
+
+        const description = document.createElement("div");
+        description.className = "task-description";
+        description.textContent = task.description;
+
+        const meta = document.createElement("div");
+        meta.className = "task-meta";
+
+        task.roles.forEach(code => {
+          const pill = document.createElement("span");
+          pill.className = "pill";
+          const label = ROLE_LABELS[code] || code;
+          pill.textContent = code + " – " + label;
+          meta.appendChild(pill);
+        });
+
+        if (!enabled && task.dependsOn && task.dependsOn.length > 0) {
+          const hint = document.createElement("span");
+          hint.className = "pill pill-ghost hint";
+          hint.textContent = "Complete previous step(s) first";
+          meta.appendChild(hint);
+        }
+
+        main.appendChild(title);
+        main.appendChild(description);
+        main.appendChild(meta);
+
+        li.appendChild(left);
+        li.appendChild(main);
+
+        list.appendChild(li);
+      });
+
+      phaseCard.appendChild(header);
+      phaseCard.appendChild(bar);
+      phaseCard.appendChild(list);
+      phasesContainer.appendChild(phaseCard);
+    });
+  }
+
+  function setupFilters() {
+    const chips = document.querySelectorAll(".chip");
+    chips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        chips.forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        const role = chip.getAttribute("data-role");
+        render(role);
+      });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setupFilters();
+    render("all");
+  });
+</script>
+</body>
+</html>
