@@ -8,6 +8,22 @@ app.use(express.json());
 
 // ====== DATABASE SETUP (Supabase Postgres via DATABASE_URL) ======
 
+if (!process.env.DATABASE_URL) {
+  console.error("DATABASE_URL is NOT set. Please set it in Render env vars.");
+}
+
+let dbHost = "unknown";
+try {
+  if (process.env.DATABASE_URL) {
+    const url = new URL(process.env.DATABASE_URL);
+    dbHost = url.hostname;
+  }
+} catch (e) {
+  console.error("Could not parse DATABASE_URL:", e);
+}
+
+console.log("Using DATABASE_URL host:", dbHost);
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   // Supabase Postgres expects SSL; this keeps it happy on Render.
