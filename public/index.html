@@ -498,6 +498,11 @@
       description: "Confirm existing e-signature tools, recommend Adobe Sign if needed, set up and assign access.",
       roles: ["B", "M"], dependsOn: ["A5"] },
 
+    { id: "B3", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
+      title: "Outline of All Income Sources",
+      description: "Request list of all income sources and use as categorization framework.",
+      roles: ["E", "Imp"], dependsOn: [] },
+
     // ---- Phase B ----
     { id: "B1", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "SS-4 Form",
@@ -506,10 +511,6 @@
     { id: "B2", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Previous Year Personal & Business Taxes",
       description: "Request prior-year tax returns and review for structure, filing status, and income.",
-      roles: ["E", "Imp"], dependsOn: ["B1"] },
-    { id: "B3", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
-      title: "Outline of All Income Sources",
-      description: "Request list of all income sources and use as categorization framework.",
       roles: ["E", "Imp"], dependsOn: ["B1"] },
     { id: "B4", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Insurance Policies",
@@ -530,11 +531,11 @@
     { id: "B8", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Employee Handbook Questionnaire",
       description: "Collect questionnaire and existing handbook, reconcile with ADP Handbook Wizard, prepare first version.",
-      roles: ["E", "HR"], dependsOn: ["B7"] },
+      roles: ["E", "HR"], dependsOn: [] },
     { id: "B9", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Employment Forms",
       description: "Collect job descriptions, offer letters, employee and contractor agreements, and identify improvements.",
-      roles: ["E", "HR"], dependsOn: ["B7"] },
+      roles: ["E", "HR"], dependsOn: [] },
 
     // ---- Phase C ----
     { id: "C1", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
