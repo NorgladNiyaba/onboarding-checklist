@@ -420,7 +420,7 @@
       <div class="sidebar-card">
         <h2>How to use</h2>
         <p>
-          Add or select a client above. Work from top to bottom. Complete all items in Phase A before you move heavily into Phases B and C.
+          Add or select a client above. Work from top to bottom. Phases A → B → C are ordered, but you can now check any task at any time (no dependencies).
           Progress is saved centrally on the server (shared by everyone).
         </p>
         <p class="mt-2">
@@ -472,31 +472,31 @@
     { id: "A5", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "ADP Setup",
       description: "Verify client in Accountant Connect, add AM/TL/AE as users, configure GLI, review S-Corp payroll, check HR tools & benefits, introduce ADP rep.",
-      roles: ["B", "Imp"], dependsOn: ["A4"] },
+      roles: ["B", "Imp"], dependsOn: [] },
     { id: "A6", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "Time & Attendance System Review",
       description: "Identify current tool, train internal team, determine EVV compliance, explore ADP options if needed.",
-      roles: ["B", "Imp"], dependsOn: ["A5"] },
+      roles: ["B", "Imp"], dependsOn: [] },
     { id: "A7", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "Retirement Portal Access",
       description: "Confirm provider, obtain access, review plan type, note contribution responsibilities.",
-      roles: ["B", "Imp"], dependsOn: ["A5"] },
+      roles: ["B", "Imp"], dependsOn: [] },
     { id: "A8", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "Health Portal Access / Health Census",
       description: "Confirm insurance plan and obtain portal access, review enrollment process or prepare health census if needed.",
-      roles: ["B", "Imp"], dependsOn: ["A5"] },
+      roles: ["B", "Imp"], dependsOn: [] },
     { id: "A9", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "Tax Account Setup",
       description: "Validate SIT & SUI setups, review ADP employee roster (addresses, jurisdictions, names, SSNs, DOB), correct discrepancies.",
-      roles: ["I", "C"], dependsOn: ["A6", "A7", "A8"] },
+      roles: ["I", "C"], dependsOn: [] },
     { id: "A10", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "POS System Review",
       description: "Identify POS, recommend Clover with ADP if savings exist, determine sales tax filing responsibility and setup if firm handles filings.",
-      roles: ["I", "Imp"], dependsOn: ["A9"] },
+      roles: ["I", "Imp"], dependsOn: [] },
     { id: "A11", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "Adobe Sign Setup",
       description: "Confirm existing e-signature tools, recommend Adobe Sign if needed, set up and assign access.",
-      roles: ["B", "M"], dependsOn: ["A5"] },
+      roles: ["B", "M"], dependsOn: [] },
 
     { id: "B3", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "Outline of All Income Sources",
@@ -507,19 +507,19 @@
     { id: "B1", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "SS-4 Form",
       description: "Request SS-4; review IRS entity instructions.",
-      roles: ["E", "Imp"], dependsOn: ["A1","A2","A3","A4","A5"] },
+      roles: ["E", "Imp"], dependsOn: [] },
     { id: "B2", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Previous Year Personal & Business Taxes",
       description: "Request prior-year tax returns and review for structure, filing status, and income.",
-      roles: ["E", "Imp"], dependsOn: ["B1"] },
+      roles: ["E", "Imp"], dependsOn: [] },
     { id: "B4", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Insurance Policies",
       description: "Collect Workers’ Comp, General Liability, and other relevant policies.",
-      roles: ["E", "Imp"], dependsOn: ["A8"] },
+      roles: ["E", "Imp"], dependsOn: [] },
     { id: "B5", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Policies: PTO, Retirement, Health, Holiday",
       description: "Review all policies, determine eligibility rules, educate client if nothing exists, ensure payroll accruals/contributions align.",
-      roles: ["E", "Imp"], dependsOn: ["A7", "A8"] },
+      roles: ["E", "Imp"], dependsOn: [] },
     { id: "B6", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Loan & Mortgage Documentation",
       description: "Request loan & mortgage docs; use for balance sheet accuracy and planning.",
@@ -527,7 +527,7 @@
     { id: "B7", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "W-4 and I-9 Access",
       description: "Collect existing W-4s and I-9s, explore digital tools or ADP I-9 feature, use Adobe Sign if necessary.",
-      roles: ["E", "HR"], dependsOn: ["A5"] },
+      roles: ["E", "HR"], dependsOn: [] },
     { id: "B8", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "Employee Handbook Questionnaire",
       description: "Collect questionnaire and existing handbook, reconcile with ADP Handbook Wizard, prepare first version.",
@@ -541,23 +541,23 @@
     { id: "C1", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "WorkDrive Usage & Folder Structure",
       description: "Train client on folder structure, confirm portal usage, encourage bookmarking.",
-      roles: ["E", "Imp"], dependsOn: ["A1","B1","B2","B3"] },
+      roles: ["E", "Imp"], dependsOn: [] },
     { id: "C2", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "Compliance Folder Review",
       description: "Present compliance folder (minimum wage, overtime, retirement mandates, PTO, PFML, workers’ comp, FLSA thresholds, posters). Educate and identify improvements.",
-      roles: ["E", "Imp"], dependsOn: ["A9","B5"] },
+      roles: ["E", "Imp"], dependsOn: [] },
     { id: "C3", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "Accounting Best Practices",
       description: "Present accounting SOPs, review habits and workflows, align expectations.",
-      roles: ["E", "Imp"], dependsOn: ["A2","B2","B3","B6"] },
+      roles: ["E", "Imp"], dependsOn: [] },
     { id: "C4", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "Employee Onboarding Documents",
       description: "Present onboarding packet, agree on what employees must sign, finalize onboarding process.",
-      roles: ["E", "Imp"], dependsOn: ["B7","B8","B9"] },
+      roles: ["E", "Imp"], dependsOn: [] },
     { id: "C5", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "Job Aids",
       description: "Provide job aids and confirm understanding.",
-      roles: ["E", "Imp"], dependsOn: ["C3","C4"] },
+      roles: ["E", "Imp"], dependsOn: [] },
     { id: "C6", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "Organizational Chart",
       description: "Prepare org chart and confirm roles and reporting lines.",
@@ -565,7 +565,7 @@
     { id: "C7", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "Reports Review",
       description: "Review Weekly Accomplishments, Daily Visits, Payroll Analysis, and Savings Tracker with client.",
-      roles: ["E", "Imp"], dependsOn: ["C3"] }
+      roles: ["E", "Imp"], dependsOn: [] }
   ];
 
   // ====== STATE (front-end) ======
@@ -628,8 +628,8 @@
   }
 
   function isTaskEnabled(task, state) {
-    if (!task.dependsOn || task.dependsOn.length === 0) return true;
-    return task.dependsOn.every(id => state[id]);
+    // Dependencies removed: all tasks always enabled
+    return true;
   }
 
   // ====== RENDERING ======
@@ -752,13 +752,6 @@
           pill.textContent = code + " – " + label;
           meta.appendChild(pill);
         });
-
-        if (!enabled && task.dependsOn && task.dependsOn.length > 0) {
-          const hint = document.createElement("span");
-          hint.className = "pill pill-ghost hint";
-          hint.textContent = "Complete previous step(s) first";
-          meta.appendChild(hint);
-        }
 
         main.appendChild(title);
         main.appendChild(description);
