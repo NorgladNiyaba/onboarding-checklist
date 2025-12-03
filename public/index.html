@@ -420,7 +420,7 @@
       <div class="sidebar-card">
         <h2>How to use</h2>
         <p>
-          Add or select a client above. Work from top to bottom. Phases A → B → C are ordered, but you can now check any task at any time (no dependencies).
+          Add or select a client above. Work from top to bottom. Phases A → B → C are ordered, but you can check any task at any time (no dependencies).
           Progress is saved centrally on the server (shared by everyone).
         </p>
         <p class="mt-2">
@@ -453,14 +453,26 @@
 
   const TASKS = [
     // ---- Phase A ----
+    { id: "A0", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
+      title: "Welcome Email",
+      description: "Send out welcome email to the client.",
+      roles: ["I", "Imp"], dependsOn: [] },
+
     { id: "A1", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "WorkDrive & SharePoint Setup",
       description: "Create SharePoint folder, create WorkDrive folder, provide client with access, confirm access.",
       roles: ["I", "S"], dependsOn: [] },
+
     { id: "A2", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "QBO Access",
       description: "Confirm firm access, assign associates, verify access.",
       roles: ["I", "M"], dependsOn: [] },
+
+    { id: "A12", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
+      title: "Chart of Accounts",
+      description: "Present the Sparing standard chart of accounts to the client. Review the structure with the client and address all questions or suggestions. Set up and implement the chart of accounts in QBO.",
+      roles: ["I", "Imp"], dependsOn: [] },
+
     { id: "A3", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
       title: "Bank Account Access",
       description: "Confirm bank allows accountant access, Fon creates accountant access, verify access.",
@@ -524,6 +536,12 @@
       title: "Loan & Mortgage Documentation",
       description: "Request loan & mortgage docs; use for balance sheet accuracy and planning.",
       roles: ["E", "A"], dependsOn: [] },
+
+    { id: "B10", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
+      title: "Assets",
+      description: "Gather information on all assets owned by the client. Complete the asset detail sheet and prepare the depreciation schedule. Record and implement the assets and depreciation in the financial statements.",
+      roles: ["I", "Imp"], dependsOn: [] },
+
     { id: "B7", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
       title: "W-4 and I-9 Access",
       description: "Collect existing W-4s and I-9s, explore digital tools or ADP I-9 feature, use Adobe Sign if necessary.",
@@ -538,6 +556,11 @@
       roles: ["E", "HR"], dependsOn: [] },
 
     // ---- Phase C ----
+    { id: "C8", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
+      title: "Meeting Notes",
+      description: "Document all meeting notes and save them in WorkDrive.",
+      roles: ["I", "Imp"], dependsOn: [] },
+
     { id: "C1", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
       title: "WorkDrive Usage & Folder Structure",
       description: "Train client on folder structure, confirm portal usage, encourage bookmarking.",
