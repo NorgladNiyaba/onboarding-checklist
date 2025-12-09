@@ -6,30 +6,91 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --card-soft: #f9fafb;
+      --border-subtle: #e5e7eb;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --accent: #0f766e;
+      --accent-soft: #a7f3d0;
+      --accent-subtle: #ecfdf5;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+      --danger-text: #b91c1c;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     body {
       margin: 0;
       padding: 0;
-      background: #f5f5f7;
-      color: #111827;
+      background: radial-gradient(circle at top, #e0f2fe 0, #f3f4f6 40%, #f3f4f6 100%);
+      color: var(--text-main);
     }
 
     .app {
-      max-width: 960px;
+      max-width: 1080px;
       margin: 0 auto;
       padding: 1.5rem;
     }
 
     h1 {
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
+      font-size: 1.9rem;
+      margin-bottom: 0.25rem;
+      letter-spacing: 0.01em;
     }
 
     .subtitle {
-      color: #4b5563;
+      color: var(--text-muted);
       margin-bottom: 0.75rem;
+    }
+
+    /* ==== Generic buttons ==== */
+    .btn {
+      padding: 0.32rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #f9fafb;
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent);
+      border-color: var(--accent-soft);
+      background-color: var(--accent-subtle);
+    }
+
+    .btn-secondary:hover {
+      background-color: #d1fae5;
+    }
+
+    .btn-danger {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      border-color: var(--danger-border);
+    }
+
+    .btn-danger:hover {
+      filter: brightness(0.98);
+    }
+
+    .btn-icon {
+      padding-inline: 0.5rem;
     }
 
     /* ==== Client bar (multi-client support) ==== */
@@ -40,10 +101,18 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 1rem;
-      background: #ffffff;
+      background: var(--card);
       padding: 0.75rem 1rem;
-      border-radius: 0.75rem;
-      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+      border-radius: 0.9rem;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.09);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .client-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
     }
 
     .client-label-group {
@@ -51,57 +120,47 @@
       align-items: center;
       gap: 0.5rem;
       font-size: 0.9rem;
-      color: #4b5563;
+      color: var(--text-muted);
     }
 
     #clientSelect {
-      min-width: 180px;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.4rem;
-      border: 1px solid #d1d5db;
-      background: #f9fafb;
+      min-width: 200px;
+      padding: 0.3rem 0.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border-subtle);
+      background: var(--card-soft);
+      font-size: 0.9rem;
     }
 
-    .client-add-group {
+    .client-right {
       display: flex;
       flex-wrap: wrap;
       gap: 0.4rem;
+      align-items: center;
     }
 
     #newClientInput {
       min-width: 200px;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.4rem;
-      border: 1px solid #d1d5db;
-      background: #ffffff;
-    }
-
-    #addClientBtn {
-      padding: 0.3rem 0.7rem;
+      padding: 0.3rem 0.55rem;
       border-radius: 0.5rem;
-      border: none;
-      font-size: 0.85rem;
-      background: #111827;
-      color: #f9fafb;
-      cursor: pointer;
-    }
-
-    #addClientBtn:hover {
-      opacity: 0.9;
+      border: 1px solid var(--border-subtle);
+      background: var(--card-soft);
+      font-size: 0.9rem;
     }
 
     .summary-bar {
-      background: #ffffff;
+      background: var(--card);
       padding: 1rem 1.25rem;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 12px rgba(15,23,42,0.06);
+      border-radius: 0.9rem;
+      box-shadow: 0 10px 30px rgba(15,23,42,0.08);
       margin-bottom: 1rem;
+      border: 1px solid rgba(148, 163, 184, 0.25);
     }
 
     .summary-header {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: center;
       gap: 0.5rem;
       flex-wrap: wrap;
     }
@@ -127,7 +186,7 @@
       height: 100%;
       width: 0%;
       border-radius: 999px;
-      background: #3b82f6;
+      background: linear-gradient(90deg, #22c55e, #0ea5e9);
       transition: width 0.2s ease-out;
     }
 
@@ -136,6 +195,7 @@
       flex-wrap: wrap;
       gap: 0.5rem;
       margin: 1rem 0 1.25rem;
+      align-items: center;
     }
 
     .filter-label {
@@ -157,9 +217,9 @@
     }
 
     .chip.active {
-      background: #111827;
+      background: var(--accent);
       color: #f9fafb;
-      border-color: #111827;
+      border-color: var(--accent);
     }
 
     .chip span {
@@ -189,11 +249,12 @@
     }
 
     .sidebar-card {
-      background: #111827;
+      background: radial-gradient(circle at top left, #0f172a, #020617 50%);
       color: #e5e7eb;
       padding: 1rem 1.25rem;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 14px rgba(15,23,42,0.5);
+      border-radius: 0.9rem;
+      box-shadow: 0 15px 40px rgba(15,23,42,0.75);
+      border: 1px solid rgba(148, 163, 184, 0.35);
     }
 
     .sidebar-card h2 {
@@ -208,11 +269,12 @@
     }
 
     .phase-card {
-      background: #ffffff;
+      background: var(--card);
       border-radius: 0.9rem;
       padding: 1rem 1.25rem;
-      box-shadow: 0 4px 12px rgba(15,23,42,0.05);
+      box-shadow: 0 10px 25px rgba(15,23,42,0.06);
       margin-bottom: 1rem;
+      border: 1px solid rgba(148, 163, 184, 0.2);
     }
 
     .phase-header {
@@ -231,7 +293,7 @@
 
     .phase-subtitle {
       font-size: 0.8rem;
-      color: #6b7280;
+      color: var(--text-muted);
     }
 
     .phase-progress {
@@ -261,10 +323,6 @@
       border-top: none;
     }
 
-    .task.disabled {
-      opacity: 0.45;
-    }
-
     .task-checkbox {
       margin-top: 0.1rem;
     }
@@ -281,7 +339,7 @@
 
     .task-description {
       font-size: 0.82rem;
-      color: #6b7280;
+      color: var(--text-muted);
       margin-bottom: 0.2rem;
     }
 
@@ -299,15 +357,6 @@
       border: 1px solid #d1d5db;
       background: #f9fafb;
       color: #374151;
-    }
-
-    .pill-ghost {
-      border-style: dashed;
-    }
-
-    .hint {
-      font-size: 0.75rem;
-      color: #9ca3af;
     }
 
     .small {
@@ -340,6 +389,30 @@
     .dashboard-table tr:last-child td {
       border-bottom: none;
     }
+
+    /* Dashboard accordion */
+    .dashboard-toggle {
+      cursor: pointer;
+    }
+
+    .summary-header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .chevron-btn {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      padding: 0.1rem 0.25rem;
+      font-size: 0.9rem;
+      color: #4b5563;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
@@ -351,18 +424,28 @@
 
   <!-- Client selector bar -->
   <div class="client-bar">
-    <div class="client-label-group">
-      <label for="clientSelect">Client:</label>
-      <select id="clientSelect"></select>
+    <div class="client-left">
+      <div class="client-label-group">
+        <label for="clientSelect">Client:</label>
+        <select id="clientSelect"></select>
+      </div>
+      <button id="editClientBtn" class="btn btn-secondary" type="button">
+        ✏️ Rename
+      </button>
+      <button id="deleteClientBtn" class="btn btn-danger" type="button">
+        🗑 Delete
+      </button>
     </div>
 
-    <div class="client-add-group">
+    <div class="client-right">
       <input
         id="newClientInput"
         type="text"
         placeholder="Add new client (e.g. ACME Home Care)"
       />
-      <button id="addClientBtn">Add</button>
+      <button id="addClientBtn" class="btn btn-primary" type="button">
+        ＋ Add
+      </button>
     </div>
   </div>
 
@@ -376,26 +459,33 @@
     </div>
   </div>
 
-  <!-- Dashboard card -->
-  <div class="summary-bar">
-    <div class="summary-header">
+  <!-- Dashboard card with accordion -->
+  <div class="summary-bar" id="dashboardCard">
+    <div class="summary-header dashboard-toggle" id="dashboardToggle">
       <div class="summary-title">Client Dashboard</div>
-      <div class="summary-percent small" id="dashboardHint">
-        Overview of all clients and their completion.
+      <div class="summary-header-right">
+        <div class="summary-percent small" id="dashboardHint">
+          Overview of all clients and their completion.
+        </div>
+        <button type="button" class="chevron-btn" aria-expanded="true">
+          <span id="dashboardChevron">▾</span>
+        </button>
       </div>
     </div>
-    <table class="dashboard-table">
-      <thead>
-        <tr>
-          <th>Client</th>
-          <th>Tasks Done</th>
-          <th>Completion</th>
-        </tr>
-      </thead>
-      <tbody id="dashboardBody">
-        <!-- Filled from JS -->
-      </tbody>
-    </table>
+    <div id="dashboardContent">
+      <table class="dashboard-table">
+        <thead>
+          <tr>
+            <th>Client</th>
+            <th>Tasks Done</th>
+            <th>Completion</th>
+          </tr>
+        </thead>
+        <tbody id="dashboardBody">
+          <!-- Filled from JS -->
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div class="filters">
@@ -627,6 +717,12 @@
     return res.json();
   }
 
+  async function apiDelete(path) {
+    const res = await fetch(path, { method: "DELETE" });
+    if (!res.ok) throw new Error("DELETE " + path + " failed");
+    return res.json();
+  }
+
   function getPhases() {
     const map = {};
     for (const task of TASKS) {
@@ -802,8 +898,8 @@
       const td = document.createElement("td");
       td.colSpan = 3;
       td.textContent = "No clients yet.";
-      tbody.appendChild(tr);
       tr.appendChild(td);
+      tbody.appendChild(tr);
       return;
     }
 
@@ -853,10 +949,32 @@
     });
   }
 
+  function setupDashboardToggle() {
+    const toggle = document.getElementById("dashboardToggle");
+    const content = document.getElementById("dashboardContent");
+    const chevron = document.getElementById("dashboardChevron");
+
+    let open = true;
+
+    const applyState = () => {
+      content.style.display = open ? "block" : "none";
+      chevron.textContent = open ? "▾" : "▸";
+    };
+
+    applyState();
+
+    toggle.addEventListener("click", () => {
+      open = !open;
+      applyState();
+    });
+  }
+
   async function setupClientsUI() {
     const select = document.getElementById("clientSelect");
     const input = document.getElementById("newClientInput");
     const addBtn = document.getElementById("addClientBtn");
+    const editBtn = document.getElementById("editClientBtn");
+    const deleteBtn = document.getElementById("deleteClientBtn");
 
     async function loadClients() {
       try {
@@ -937,6 +1055,57 @@
       }
     });
 
+    editBtn.addEventListener("click", async () => {
+      if (!currentClientId) return;
+      const newName = prompt("Edit client name:", currentClientName || "");
+      if (!newName) return;
+      const trimmed = newName.trim();
+      if (!trimmed) return;
+
+      try {
+        const updated = await apiPut(
+          `/api/clients/${encodeURIComponent(currentClientId)}`,
+          { name: trimmed }
+        );
+        await loadClients();
+        currentClientId = updated.id;
+        currentClientName = updated.name;
+        populateSelect();
+        await loadStateForCurrentClient();
+        await refreshDashboard();
+      } catch (e) {
+        console.error(e);
+      }
+    });
+
+    deleteBtn.addEventListener("click", async () => {
+      if (!currentClientId) return;
+      const confirmDelete = confirm(
+        `Delete client "${currentClientName}" and all its checklist data?`
+      );
+      if (!confirmDelete) return;
+
+      try {
+        await apiDelete(`/api/clients/${encodeURIComponent(currentClientId)}`);
+        await loadClients();
+        if (clientsCache.length > 0) {
+          currentClientId = clientsCache[0].id;
+          currentClientName = clientsCache[0].name;
+          populateSelect();
+          await loadStateForCurrentClient();
+        } else {
+          currentClientId = null;
+          currentClientName = "";
+          currentState = {};
+          populateSelect();
+          render();
+        }
+        await refreshDashboard();
+      } catch (e) {
+        console.error(e);
+      }
+    });
+
     // Initial load
     await loadClients();
 
@@ -963,6 +1132,7 @@
 
   document.addEventListener("DOMContentLoaded", async () => {
     setupFilters();
+    setupDashboardToggle();
     await setupClientsUI();
   });
 </script>

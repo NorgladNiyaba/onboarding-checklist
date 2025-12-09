@@ -12,21 +12,9 @@ if (!process.env.DATABASE_URL) {
   console.error("DATABASE_URL is NOT set. Please set it in Render env vars.");
 }
 
-let dbHost = "unknown";
-try {
-  if (process.env.DATABASE_URL) {
-    const url = new URL(process.env.DATABASE_URL);
-    dbHost = url.hostname;
-  }
-} catch (e) {
-  console.error("Could not parse DATABASE_URL:", e);
-}
-
-console.log("Using DATABASE_URL host:", dbHost);
-
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  // Supabase Postgres expects SSL; this keeps it happy on Render.
+  // Supabase Postgres expects SSL in most hosted setups
   ssl:
     process.env.DATABASE_SSL === "false"
       ? false
@@ -35,7 +23,6 @@ const pool = new Pool({
 
 // Create tables if they don't exist
 async function initDb() {
-  // Table: clients (id + name)
   await pool.query(`
     CREATE TABLE IF NOT EXISTS clients (
       id   TEXT PRIMARY KEY,
@@ -43,7 +30,6 @@ async function initDb() {
     );
   `);
 
-  // Table: client_states (one JSON state per client)
   await pool.query(`
     CREATE TABLE IF NOT EXISTS client_states (
       client_id TEXT PRIMARY KEY REFERENCES clients(id) ON DELETE CASCADE,
@@ -54,6 +40,7 @@ async function initDb() {
   console.log("Database initialized");
 }
 
+// Internal ID from name (used only once on creation)
 function makeClientId(name) {
   return (
     name
@@ -67,7 +54,7 @@ function makeClientId(name) {
 // ====== API ROUTES ======
 
 // TEMPORARY ADMIN ROUTE: wipe all clients & states
-// Visit /api/admin/reset-all once, then remove this route.
+// Visit /api/admin/reset-all once, then remove this route if you want.
 app.get("/api/admin/reset-all", async (req, res) => {
   try {
     await pool.query("DELETE FROM client_states;");
@@ -116,7 +103,6 @@ app.post("/api/clients", async (req, res) => {
 
     const client = result.rows[0];
 
-    // Ensure there's at least an empty state row for this client
     await pool.query(
       `
       INSERT INTO client_states (client_id, state)
@@ -134,6 +120,62 @@ app.post("/api/clients", async (req, res) => {
   }
 });
 
+// ✅ Rename client (edit visible company name)
+app.put("/api/clients/:id", async (req, res) => {
+  const id = req.params.id;
+  const { name } = req.body || {};
+
+  if (!name || !name.trim()) {
+    return res.status(400).json({ error: "Name is required" });
+  }
+
+  const cleanName = name.trim();
+
+  try {
+    const result = await pool.query(
+      `
+      UPDATE clients
+      SET name = $2
+      WHERE id = $1
+      RETURNING id, name;
+      `,
+      [id, cleanName]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Client not found" });
+    }
+
+    const client = result.rows[0];
+    console.log("Renamed client:", id, "→", client.name);
+    res.json(client);
+  } catch (err) {
+    console.error("Error renaming client:", err);
+    res.status(500).json({ error: "Failed to rename client" });
+  }
+});
+
+// ✅ Delete client (and its checklist state via CASCADE)
+app.delete("/api/clients/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const result = await pool.query(
+      "DELETE FROM clients WHERE id = $1 RETURNING id;",
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Client not found" });
+    }
+
+    console.log("Deleted client:", id);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("Error deleting client:", err);
+    res.status(500).json({ error: "Failed to delete client" });
+  }
+});
+
 // Get checklist state for a specific client
 app.get("/api/clients/:id/state", async (req, res) => {
   const id = req.params.id;
@@ -144,7 +186,6 @@ app.get("/api/clients/:id/state", async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      // No state saved yet → return empty object
       return res.json({});
     }
 
@@ -165,7 +206,6 @@ app.put("/api/clients/:id/state", async (req, res) => {
   }
 
   try {
-    // Ensure client exists; if not, create it with id as name
     await pool.query(
       `
       INSERT INTO clients (id, name)
@@ -175,7 +215,6 @@ app.put("/api/clients/:id/state", async (req, res) => {
       [id]
     );
 
-    // Upsert state
     await pool.query(
       `
       INSERT INTO client_states (client_id, state)
