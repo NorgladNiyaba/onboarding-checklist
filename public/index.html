@@ -367,6 +367,189 @@
       margin-top: 24px;
     }
 
+    .collapsible-card {
+      overflow: hidden;
+    }
+
+    .collapse-toggle {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+      text-align: left;
+      color: inherit;
+    }
+
+    .collapse-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .collapse-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .collapse-title-text {
+      min-width: 0;
+    }
+
+    .collapse-label {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .collapse-copy {
+      margin: 4px 0 0;
+      color: var(--text-soft);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .collapse-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .collapse-chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--surface-muted);
+      border: 1px solid rgba(15, 118, 110, 0.12);
+      color: var(--text-soft);
+      font-size: 0.84rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .collapse-chevron {
+      width: 38px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(15, 118, 110, 0.08);
+      color: var(--accent-strong);
+      font-size: 1rem;
+      transition: transform 0.18s ease, background 0.18s ease;
+      flex: 0 0 auto;
+    }
+
+    .collapse-toggle[aria-expanded="true"] .collapse-chevron {
+      transform: rotate(180deg);
+      background: rgba(15, 118, 110, 0.12);
+    }
+
+    .collapse-panel {
+      overflow: hidden;
+    }
+
+    .collapse-panel[hidden] {
+      display: none;
+    }
+
+    .dashboard-card {
+      margin-top: 20px;
+      padding: 22px;
+    }
+
+    .dashboard-content {
+      padding-top: 18px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .dashboard-stat {
+      padding: 18px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #f7fbfb 100%);
+      border: 1px solid rgba(15, 118, 110, 0.12);
+    }
+
+    .dashboard-stat-label {
+      color: var(--text-soft);
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .dashboard-stat-value {
+      margin-top: 8px;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    .dashboard-table-wrap {
+      margin-top: 18px;
+      border: 1px solid rgba(15, 118, 110, 0.1);
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--surface-strong);
+    }
+
+    .dashboard-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .dashboard-table th,
+    .dashboard-table td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(15, 118, 110, 0.08);
+      font-size: 0.94rem;
+    }
+
+    .dashboard-table th {
+      background: #f4f8f8;
+      color: var(--text-soft);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .dashboard-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .dashboard-company {
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .dashboard-progress-cell {
+      min-width: 180px;
+    }
+
+    .dashboard-progress-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-soft);
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .dashboard-empty {
+      padding: 18px;
+      color: var(--text-soft);
+      font-size: 0.95rem;
+    }
+
     .phase-card {
       padding: 24px;
       border-radius: var(--radius-lg);
@@ -440,6 +623,10 @@
     .phase-metric span {
       color: var(--text-soft);
       font-size: 0.88rem;
+    }
+
+    .phase-content {
+      padding-top: 18px;
     }
 
     .task-list {
@@ -574,9 +761,23 @@
         grid-template-columns: 1fr;
       }
 
+      .collapse-topline,
       .phase-metric,
       .task-status {
         text-align: left;
+      }
+
+      .collapse-topline {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .collapse-meta {
+        justify-content: flex-start;
+      }
+
+      .phase-metric,
+      .task-status {
         justify-self: start;
       }
 
@@ -686,6 +887,57 @@
       </article>
     </section>
 
+    <section class="surface-card dashboard-card collapsible-card" aria-label="Portfolio dashboard">
+      <button class="collapse-toggle" id="dashboardToggle" type="button" aria-expanded="true" aria-controls="dashboardPanel">
+        <div class="collapse-topline">
+          <div class="collapse-title">
+            <div class="collapse-title-text">
+              <h2 class="collapse-label">Progress dashboard</h2>
+              <p class="collapse-copy">Review all company workspaces, overall completion, and what still needs attention.</p>
+            </div>
+          </div>
+          <div class="collapse-meta">
+            <span class="collapse-chip" id="dashboardSummaryChip">No company workspaces yet</span>
+            <span class="collapse-chevron" aria-hidden="true">⌄</span>
+          </div>
+        </div>
+      </button>
+      <div class="collapse-panel dashboard-content" id="dashboardPanel">
+        <div class="dashboard-grid">
+          <article class="dashboard-stat">
+            <div class="dashboard-stat-label">Company workspaces</div>
+            <div class="dashboard-stat-value" id="dashboardCompanyCount">0</div>
+          </article>
+          <article class="dashboard-stat">
+            <div class="dashboard-stat-label">Average completion</div>
+            <div class="dashboard-stat-value" id="dashboardAverageCompletion">0%</div>
+          </article>
+          <article class="dashboard-stat">
+            <div class="dashboard-stat-label">Most advanced workspace</div>
+            <div class="dashboard-stat-value" id="dashboardTopClient">None yet</div>
+          </article>
+        </div>
+
+        <div class="dashboard-table-wrap">
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Status</th>
+                <th>Progress</th>
+                <th>Next item</th>
+              </tr>
+            </thead>
+            <tbody id="dashboardBody">
+              <tr>
+                <td colspan="4" class="dashboard-empty">No company workspaces yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <main id="phasesContainer" class="phases" aria-live="polite"></main>
   </div>
   <script>
@@ -733,6 +985,8 @@
     let currentClientName = "";
     let currentState = {};
     let clientsCache = [];
+    let dashboardRowsCache = [];
+    const phaseOpenState = { A: true, B: true, C: true };
 
     async function apiGet(path) {
       const res = await fetch(path);
@@ -793,6 +1047,32 @@
       return phases.find((phase) => phase.tasks.some((task) => !state[task.id])) || phases[phases.length - 1] || null;
     }
 
+    function getPhaseCompletion(phase, state) {
+      const total = phase.tasks.length;
+      const done = phase.tasks.filter((task) => state[task.id]).length;
+      const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+      return { total, done, percent };
+    }
+
+    function getPhaseStatusText(phase, state) {
+      const currentPhase = getCurrentPhase(state);
+      const completion = getPhaseCompletion(phase, state);
+
+      if (completion.done === completion.total) return "Complete";
+      if (currentPhase && currentPhase.id === phase.id) return "Current focus";
+      if (completion.done > 0) return "In progress";
+      return "Not started";
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
     function updateOverview() {
       const overallText = document.getElementById("overallText");
       const overallBar = document.getElementById("overallBar");
@@ -850,6 +1130,111 @@
       }
     }
 
+    function setPanelState(panel, shouldOpen) {
+      panel.hidden = !shouldOpen;
+    }
+
+    function setupCollapsibleToggle(button, panel, initialOpen, onToggle) {
+      setPanelState(panel, initialOpen);
+      button.setAttribute("aria-expanded", String(initialOpen));
+
+      button.addEventListener("click", () => {
+        const nextOpen = button.getAttribute("aria-expanded") !== "true";
+        button.setAttribute("aria-expanded", String(nextOpen));
+        setPanelState(panel, nextOpen);
+        if (onToggle) onToggle(nextOpen);
+      });
+    }
+
+    function computeDashboardSummary(rows) {
+      if (!rows.length) {
+        return {
+          totalClients: 0,
+          averagePercent: 0,
+          topClientName: "None yet"
+        };
+      }
+
+      const averagePercent = Math.round(rows.reduce((sum, row) => sum + row.percent, 0) / rows.length);
+      const topClient = rows.slice().sort((a, b) => b.percent - a.percent || a.client.name.localeCompare(b.client.name))[0];
+
+      return {
+        totalClients: rows.length,
+        averagePercent,
+        topClientName: topClient ? topClient.client.name : "None yet"
+      };
+    }
+
+    function renderDashboard() {
+      const body = document.getElementById("dashboardBody");
+      const companyCount = document.getElementById("dashboardCompanyCount");
+      const averageCompletion = document.getElementById("dashboardAverageCompletion");
+      const topClient = document.getElementById("dashboardTopClient");
+      const summaryChip = document.getElementById("dashboardSummaryChip");
+
+      const summary = computeDashboardSummary(dashboardRowsCache);
+      companyCount.textContent = String(summary.totalClients);
+      averageCompletion.textContent = `${summary.averagePercent}%`;
+      topClient.textContent = summary.topClientName;
+      summaryChip.textContent = summary.totalClients
+        ? `${summary.totalClients} workspace${summary.totalClients === 1 ? "" : "s"} tracked`
+        : "No company workspaces yet";
+
+      body.innerHTML = "";
+
+      if (!dashboardRowsCache.length) {
+        body.innerHTML = '<tr><td colspan="4" class="dashboard-empty">No company workspaces yet.</td></tr>';
+        return;
+      }
+
+      dashboardRowsCache
+        .slice()
+        .sort((a, b) => b.percent - a.percent || a.client.name.localeCompare(b.client.name))
+        .forEach((row) => {
+          const nextTask = getNextIncompleteTask(row.state || {});
+          const status = row.percent === 100 ? "Complete" : row.percent > 0 ? "In progress" : "Not started";
+          const progressLabel = `${row.done} of ${row.total} complete`;
+          const nextItem = nextTask ? nextTask.title : "All items completed";
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td class="dashboard-company">${escapeHtml(row.client.name)}</td>
+            <td>${escapeHtml(status)}</td>
+            <td class="dashboard-progress-cell">
+              <span class="dashboard-progress-label">${escapeHtml(progressLabel)} • ${row.percent}%</span>
+              <div class="progress-band" aria-hidden="true">
+                <div class="progress-inner" style="width: ${row.percent}%"></div>
+              </div>
+            </td>
+            <td>${escapeHtml(nextItem)}</td>
+          `;
+          body.appendChild(tr);
+        });
+    }
+
+    async function refreshDashboard() {
+      if (!clientsCache.length) {
+        dashboardRowsCache = [];
+        renderDashboard();
+        return;
+      }
+
+      dashboardRowsCache = await Promise.all(
+        clientsCache.map(async (client) => {
+          try {
+            const state = await apiGet(`/api/clients/${encodeURIComponent(client.id)}/state`);
+            const { total, done, percent } = computeCompletion(state || {});
+            return { client, state: state || {}, total, done, percent };
+          } catch (error) {
+            console.error(error);
+            return { client, state: {}, total: TASKS.length, done: 0, percent: 0 };
+          }
+        })
+      );
+
+      renderDashboard();
+    }
+
     function render() {
       const phasesContainer = document.getElementById("phasesContainer");
       const phases = getPhases();
@@ -866,30 +1251,43 @@
       }
 
       phases.forEach((phase) => {
-        const totalPhase = phase.tasks.length;
-        const donePhase = phase.tasks.filter((task) => currentState[task.id]).length;
-        const phasePercent = totalPhase === 0 ? 0 : Math.round((donePhase / totalPhase) * 100);
+        const { total: totalPhase, done: donePhase, percent: phasePercent } = getPhaseCompletion(phase, currentState);
         const detail = PHASE_DETAILS[phase.id];
+        const statusText = getPhaseStatusText(phase, currentState);
 
         const phaseCard = document.createElement("section");
-        phaseCard.className = "phase-card";
+        phaseCard.className = "phase-card collapsible-card";
 
-        const phaseHead = document.createElement("div");
-        phaseHead.className = "phase-head";
-
-        const phaseIntro = document.createElement("div");
-        phaseIntro.innerHTML = `
-          <div class="phase-label">
-            <span class="phase-badge">${detail ? detail.step.replace("Step ", "") : phase.order}</span>
-            ${detail ? detail.step : "Step"}
+        const toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "collapse-toggle";
+        toggle.setAttribute("aria-controls", `phase-panel-${phase.id}`);
+        toggle.innerHTML = `
+          <div class="collapse-topline">
+            <div class="collapse-title">
+              <div class="collapse-title-text">
+                <div class="phase-label">
+                  <span class="phase-badge">${detail ? detail.step.replace("Step ", "") : phase.order}</span>
+                  ${detail ? detail.step : "Step"}
+                </div>
+                <h2 class="phase-title">${phase.title}</h2>
+                <p class="phase-copy">${detail ? detail.description : ""}</p>
+              </div>
+            </div>
+            <div class="collapse-meta">
+              <span class="collapse-chip">${statusText}</span>
+              <div class="phase-metric">
+                <strong>${donePhase}/${totalPhase}</strong>
+                <span>${phasePercent}% complete</span>
+              </div>
+              <span class="collapse-chevron" aria-hidden="true">⌄</span>
+            </div>
           </div>
-          <h2 class="phase-title">${phase.title}</h2>
-          <p class="phase-copy">${detail ? detail.description : ""}</p>
         `;
 
-        const phaseMetric = document.createElement("div");
-        phaseMetric.className = "phase-metric";
-        phaseMetric.innerHTML = `<strong>${donePhase}/${totalPhase}</strong><span>${phasePercent}% complete</span>`;
+        const panel = document.createElement("div");
+        panel.className = "collapse-panel phase-content";
+        panel.id = `phase-panel-${phase.id}`;
 
         const bar = document.createElement("div");
         bar.className = "progress-band";
@@ -916,6 +1314,7 @@
             try {
               await apiPut(`/api/clients/${encodeURIComponent(currentClientId)}/state`, currentState);
               render();
+              await refreshDashboard();
             } catch (error) {
               console.error(error);
             }
@@ -943,11 +1342,13 @@
           list.appendChild(li);
         });
 
-        phaseHead.appendChild(phaseIntro);
-        phaseHead.appendChild(phaseMetric);
-        phaseCard.appendChild(phaseHead);
-        phaseCard.appendChild(bar);
-        phaseCard.appendChild(list);
+        panel.appendChild(bar);
+        panel.appendChild(list);
+        phaseCard.appendChild(toggle);
+        phaseCard.appendChild(panel);
+        setupCollapsibleToggle(toggle, panel, phaseOpenState[phase.id] !== false, (isOpen) => {
+          phaseOpenState[phase.id] = isOpen;
+        });
         phasesContainer.appendChild(phaseCard);
       });
     }
@@ -1032,6 +1433,7 @@
           currentClientName = created.name;
           populateSelect();
           await loadStateForCurrentClient();
+          await refreshDashboard();
         } catch (error) {
           console.error(error);
         }
@@ -1060,6 +1462,7 @@
           currentClientName = updated.name;
           populateSelect();
           await loadStateForCurrentClient();
+          await refreshDashboard();
         } catch (error) {
           console.error(error);
         }
@@ -1087,6 +1490,7 @@
             populateSelect();
             render();
           }
+          await refreshDashboard();
         } catch (error) {
           console.error(error);
         }
@@ -1095,9 +1499,15 @@
       await loadClients();
       populateSelect();
       await loadStateForCurrentClient();
+      await refreshDashboard();
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
+      setupCollapsibleToggle(
+        document.getElementById("dashboardToggle"),
+        document.getElementById("dashboardPanel"),
+        true
+      );
       render();
       await setupClientsUI();
     });
