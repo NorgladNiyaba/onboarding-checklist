@@ -6,1135 +6,1101 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
-      --bg: #f3f4f6;
-      --card: #ffffff;
-      --card-soft: #f9fafb;
-      --border-subtle: #e5e7eb;
-      --text-main: #111827;
-      --text-muted: #6b7280;
+      --bg: #eef3f4;
+      --surface: rgba(255, 255, 255, 0.92);
+      --surface-strong: #ffffff;
+      --surface-muted: #f5f7f7;
+      --border: rgba(15, 118, 110, 0.14);
+      --text: #102127;
+      --text-soft: #52626a;
+      --text-faint: #72828a;
       --accent: #0f766e;
-      --accent-soft: #a7f3d0;
-      --accent-subtle: #ecfdf5;
-      --danger-bg: #fef2f2;
-      --danger-border: #fecaca;
-      --danger-text: #b91c1c;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --accent-strong: #115e59;
+      --accent-wash: rgba(15, 118, 110, 0.08);
+      --shadow-md: 0 16px 40px rgba(16, 33, 39, 0.08);
+      --shadow-sm: 0 8px 18px rgba(16, 33, 39, 0.06);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      font-family: "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
       margin: 0;
-      padding: 0;
-      background: radial-gradient(circle at top, #e0f2fe 0, #f3f4f6 40%, #f3f4f6 100%);
-      color: var(--text-main);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(167, 243, 208, 0.65), transparent 28%),
+        radial-gradient(circle at top right, rgba(186, 230, 253, 0.7), transparent 32%),
+        linear-gradient(180deg, #f8fbfb 0%, var(--bg) 58%, #f7fafb 100%);
     }
 
-    .app {
-      max-width: 1080px;
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .page-shell {
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 1.5rem;
+      padding: 28px 18px 48px;
     }
 
-    h1 {
-      font-size: 1.9rem;
-      margin-bottom: 0.25rem;
-      letter-spacing: 0.01em;
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 30px;
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      background:
+        linear-gradient(140deg, rgba(15, 118, 110, 0.96), rgba(10, 71, 91, 0.94)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 55%);
+      box-shadow: 0 30px 70px rgba(9, 46, 54, 0.22);
+      color: #f4fbfb;
     }
 
-    .subtitle {
-      color: var(--text-muted);
-      margin-bottom: 0.75rem;
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -120px auto;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 68%);
+      pointer-events: none;
     }
 
-    /* ==== Generic buttons ==== */
-    .btn {
-      padding: 0.32rem 0.8rem;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      border: 1px solid transparent;
-      cursor: pointer;
+    .eyebrow {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      white-space: nowrap;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
-    .btn-primary {
-      background: var(--accent);
-      color: #f9fafb;
-      border-color: var(--accent);
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 22px;
+      margin-top: 18px;
     }
 
-    .btn-primary:hover {
-      filter: brightness(1.05);
+    .hero-copy h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2.05rem, 4vw, 3.3rem);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
     }
 
-    .btn-secondary {
-      background: transparent;
-      color: var(--accent);
-      border-color: var(--accent-soft);
-      background-color: var(--accent-subtle);
+    .hero-copy p {
+      max-width: 680px;
+      margin: 0;
+      color: rgba(244, 251, 251, 0.86);
+      font-size: 1rem;
+      line-height: 1.65;
     }
 
-    .btn-secondary:hover {
-      background-color: #d1fae5;
+    .hero-stats {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     }
 
-    .btn-danger {
-      background: var(--danger-bg);
-      color: var(--danger-text);
-      border-color: var(--danger-border);
+    .stat-card {
+      padding: 18px 18px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(14px);
     }
 
-    .btn-danger:hover {
-      filter: brightness(0.98);
+    .stat-label {
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(244, 251, 251, 0.72);
     }
 
-    .btn-icon {
-      padding-inline: 0.5rem;
+    .stat-value {
+      margin-top: 8px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
     }
 
-    /* ==== Client bar (multi-client support) ==== */
-    .client-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-      background: var(--card);
-      padding: 0.75rem 1rem;
-      border-radius: 0.9rem;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.09);
-      border: 1px solid rgba(148, 163, 184, 0.25);
+    .stat-note {
+      margin-top: 6px;
+      color: rgba(244, 251, 251, 0.78);
+      font-size: 0.92rem;
+      line-height: 1.45;
     }
 
-    .client-left {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
+    .top-grid {
+      display: grid;
+      gap: 18px;
+      margin-top: 20px;
     }
 
-    .client-label-group {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
-      color: var(--text-muted);
+    .surface-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(12px);
     }
 
-    #clientSelect {
-      min-width: 200px;
-      padding: 0.3rem 0.5rem;
-      border-radius: 0.5rem;
-      border: 1px solid var(--border-subtle);
-      background: var(--card-soft);
-      font-size: 0.9rem;
+    .workspace-card,
+    .overview-card {
+      padding: 22px;
     }
 
-    .client-right {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      align-items: center;
-    }
-
-    #newClientInput {
-      min-width: 200px;
-      padding: 0.3rem 0.55rem;
-      border-radius: 0.5rem;
-      border: 1px solid var(--border-subtle);
-      background: var(--card-soft);
-      font-size: 0.9rem;
-    }
-
-    .summary-bar {
-      background: var(--card);
-      padding: 1rem 1.25rem;
-      border-radius: 0.9rem;
-      box-shadow: 0 10px 30px rgba(15,23,42,0.08);
-      margin-bottom: 1rem;
-      border: 1px solid rgba(148, 163, 184, 0.25);
-    }
-
-    .summary-header {
+    .workspace-head {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 0.5rem;
+      gap: 16px;
+      align-items: flex-start;
       flex-wrap: wrap;
+      margin-bottom: 18px;
     }
 
-    .summary-title {
+    .section-title {
+      margin: 0;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .section-copy {
+      margin: 6px 0 0;
+      color: var(--text-soft);
+      line-height: 1.55;
+      font-size: 0.95rem;
+      max-width: 700px;
+    }
+
+    .save-note {
+      align-self: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--accent-wash);
+      color: var(--accent-strong);
+      font-size: 0.84rem;
       font-weight: 600;
     }
 
-    .summary-percent {
-      font-size: 0.95rem;
-      color: #374151;
+    .workspace-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     }
 
-    .progress {
-      margin-top: 0.5rem;
-      height: 0.6rem;
+    .field-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field-label {
+      font-size: 0.87rem;
+      font-weight: 600;
+      color: var(--text-soft);
+    }
+
+    .field-control,
+    .field-input {
+      width: 100%;
+      min-height: 50px;
+      border-radius: 14px;
+      border: 1px solid rgba(15, 118, 110, 0.18);
+      background: var(--surface-strong);
+      color: var(--text);
+      padding: 0 16px;
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    }
+
+    .field-control:focus,
+    .field-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .inline-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid rgba(15, 118, 110, 0.18);
+      outline-offset: 2px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #13867c 0%, #0f766e 100%);
+      color: #f8fffe;
+      box-shadow: 0 12px 24px rgba(15, 118, 110, 0.16);
+    }
+
+    .btn-secondary {
+      background: #f8fbfb;
+      border-color: rgba(15, 118, 110, 0.16);
+      color: var(--accent-strong);
+    }
+
+    .btn-secondary:hover {
+      background: #edf7f6;
+      border-color: rgba(15, 118, 110, 0.3);
+    }
+
+    .btn-danger {
+      background: #fff6f5;
+      border-color: rgba(220, 38, 38, 0.14);
+      color: #b42318;
+    }
+
+    .btn-danger:hover {
+      background: #fff0ef;
+      border-color: rgba(220, 38, 38, 0.22);
+    }
+
+    .overview-grid {
+      display: grid;
+      gap: 18px;
+      margin-top: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    .progress-band {
+      margin-top: 14px;
+      height: 12px;
       border-radius: 999px;
-      background: #e5e7eb;
+      background: rgba(15, 118, 110, 0.1);
       overflow: hidden;
     }
 
     .progress-inner {
       height: 100%;
-      width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #22c55e, #0ea5e9);
-      transition: width 0.2s ease-out;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #20b486 0%, #0f766e 48%, #1663a3 100%);
+      transition: width 0.22s ease-out;
     }
 
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin: 1rem 0 1.25rem;
-      align-items: center;
+    .overview-metric {
+      margin-top: 12px;
+      font-size: 1.9rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
     }
 
-    .filter-label {
-      font-size: 0.9rem;
-      color: #4b5563;
-      margin-right: 0.25rem;
+    .overview-subcopy {
+      margin-top: 6px;
+      color: var(--text-soft);
+      line-height: 1.55;
+      font-size: 0.95rem;
     }
 
-    .chip {
-      border: 1px solid #d1d5db;
-      border-radius: 999px;
-      padding: 0.25rem 0.65rem;
-      font-size: 0.8rem;
-      background: #ffffff;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-
-    .chip.active {
-      background: var(--accent);
-      color: #f9fafb;
-      border-color: var(--accent);
-    }
-
-    .chip span {
-      font-weight: 600;
-    }
-
-    .layout {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-
-    @media (min-width: 900px) {
-      .layout {
-        flex-direction: row;
-        align-items: flex-start;
-      }
-      .sidebar {
-        width: 260px;
-        position: sticky;
-        top: 1rem;
-        align-self: flex-start;
-      }
-      .main {
-        flex: 1;
-      }
-    }
-
-    .sidebar-card {
-      background: radial-gradient(circle at top left, #0f172a, #020617 50%);
-      color: #e5e7eb;
-      padding: 1rem 1.25rem;
-      border-radius: 0.9rem;
-      box-shadow: 0 15px 40px rgba(15,23,42,0.75);
-      border: 1px solid rgba(148, 163, 184, 0.35);
-    }
-
-    .sidebar-card h2 {
-      font-size: 1rem;
-      margin: 0 0 0.5rem;
-      color: #f9fafb;
-    }
-
-    .sidebar-card p {
-      font-size: 0.85rem;
-      margin: 0;
-    }
-
-    .phase-card {
-      background: var(--card);
-      border-radius: 0.9rem;
-      padding: 1rem 1.25rem;
-      box-shadow: 0 10px 25px rgba(15,23,42,0.06);
-      margin-bottom: 1rem;
-      border: 1px solid rgba(148, 163, 184, 0.2);
-    }
-
-    .phase-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.6rem;
-      flex-wrap: wrap;
-    }
-
-    .phase-title {
-      font-weight: 600;
-      font-size: 1rem;
-    }
-
-    .phase-subtitle {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .phase-progress {
-      font-size: 0.8rem;
-      color: #4b5563;
-    }
-
-    .phase-progress strong {
-      font-weight: 600;
-    }
-
-    .task-list {
-      margin: 0.4rem 0 0;
+    .guidance-list {
+      display: grid;
+      gap: 12px;
+      margin: 18px 0 0;
       padding: 0;
       list-style: none;
     }
 
-    .task {
+    .guidance-list li {
       display: flex;
-      gap: 0.6rem;
+      gap: 12px;
       align-items: flex-start;
-      padding: 0.5rem 0.1rem;
-      border-top: 1px solid #f3f4f6;
+      color: var(--text-soft);
+      line-height: 1.55;
+      font-size: 0.95rem;
     }
 
-    .task:first-child {
-      border-top: none;
+    .guidance-list li::before {
+      content: "";
+      flex: 0 0 10px;
+      width: 10px;
+      height: 10px;
+      margin-top: 7px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #1ac08b, #0f766e);
+      box-shadow: 0 0 0 5px rgba(15, 118, 110, 0.08);
     }
 
-    .task-checkbox {
-      margin-top: 0.1rem;
+    .phases {
+      display: grid;
+      gap: 20px;
+      margin-top: 24px;
     }
 
-    .task-main {
-      flex: 1;
+    .phase-card {
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      background: var(--surface-strong);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      animation: rise-in 0.35s ease both;
     }
 
-    .task-title {
-      font-size: 0.92rem;
-      font-weight: 500;
-      margin-bottom: 0.15rem;
-    }
-
-    .task-description {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin-bottom: 0.2rem;
-    }
-
-    .task-meta {
+    .phase-head {
       display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
       flex-wrap: wrap;
-      gap: 0.3rem;
+      margin-bottom: 20px;
+    }
+
+    .phase-label {
+      display: inline-flex;
       align-items: center;
+      gap: 10px;
+      color: var(--accent-strong);
+      font-size: 0.84rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
     }
 
-    .pill {
-      font-size: 0.7rem;
-      padding: 0.12rem 0.45rem;
-      border-radius: 999px;
-      border: 1px solid #d1d5db;
-      background: #f9fafb;
-      color: #374151;
-    }
-
-    .small {
-      font-size: 0.8rem;
-    }
-
-    .mt-1 { margin-top: 0.25rem; }
-    .mt-2 { margin-top: 0.5rem; }
-
-    /* Dashboard table */
-    .dashboard-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 0.5rem;
-      font-size: 0.85rem;
-    }
-
-    .dashboard-table th,
-    .dashboard-table td {
-      padding: 0.35rem 0.4rem;
-      border-bottom: 1px solid #e5e7eb;
-      text-align: left;
-    }
-
-    .dashboard-table th {
-      font-weight: 600;
-      color: #4b5563;
-    }
-
-    .dashboard-table tr:last-child td {
-      border-bottom: none;
-    }
-
-    /* Dashboard accordion */
-    .dashboard-toggle {
-      cursor: pointer;
-    }
-
-    .summary-header-right {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .chevron-btn {
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      padding: 0.1rem 0.25rem;
-      font-size: 0.9rem;
-      color: #4b5563;
+    .phase-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #e4f7f1 0%, #d4f0e9 100%);
+      border: 1px solid rgba(15, 118, 110, 0.16);
+      font-size: 0.92rem;
+      letter-spacing: 0;
+    }
+
+    .phase-title {
+      margin: 12px 0 8px;
+      font-size: 1.48rem;
+      letter-spacing: -0.03em;
+    }
+
+    .phase-copy {
+      margin: 0;
+      color: var(--text-soft);
+      line-height: 1.6;
+      max-width: 720px;
+    }
+
+    .phase-metric {
+      min-width: 140px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: var(--surface-muted);
+      border: 1px solid rgba(15, 118, 110, 0.12);
+      text-align: right;
+    }
+
+    .phase-metric strong {
+      display: block;
+      font-size: 1.25rem;
+      letter-spacing: -0.03em;
+    }
+
+    .phase-metric span {
+      color: var(--text-soft);
+      font-size: 0.88rem;
+    }
+
+    .task-list {
+      display: grid;
+      gap: 14px;
+      margin: 20px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .task-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 16px;
+      align-items: start;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(15, 118, 110, 0.1);
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdfd 100%);
+      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+    }
+
+    .task-item:hover {
+      transform: translateY(-1px);
+      border-color: rgba(15, 118, 110, 0.18);
+      box-shadow: 0 10px 24px rgba(16, 33, 39, 0.06);
+    }
+
+    .task-item.completed {
+      background: linear-gradient(180deg, #f5fcf9 0%, #f7fbfa 100%);
+    }
+
+    .task-check {
+      width: 24px;
+      height: 24px;
+      margin-top: 2px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .task-title {
+      margin: 0 0 6px;
+      font-size: 1rem;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+    }
+
+    .task-description {
+      margin: 0;
+      color: var(--text-soft);
+      line-height: 1.55;
+      font-size: 0.94rem;
+      max-width: 760px;
+    }
+
+    .task-status {
+      align-self: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+      background: #eff6f5;
+      color: var(--text-faint);
+      border: 1px solid rgba(15, 118, 110, 0.1);
+    }
+
+    .task-item.completed .task-status {
+      background: #e6f8ef;
+      color: #147848;
+      border-color: rgba(31, 157, 99, 0.16);
+    }
+
+    .empty-state {
+      margin-top: 24px;
+      padding: 40px 26px;
+      text-align: center;
+    }
+
+    .empty-state h2 {
+      margin: 0 0 10px;
+      font-size: 1.5rem;
+      letter-spacing: -0.03em;
+    }
+
+    .empty-state p {
+      max-width: 560px;
+      margin: 0 auto;
+      color: var(--text-soft);
+      line-height: 1.65;
+    }
+
+    @keyframes rise-in {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (min-width: 960px) {
+      .hero-grid {
+        grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.9fr);
+        align-items: end;
+      }
+
+      .top-grid {
+        grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+        align-items: start;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page-shell {
+        padding-inline: 14px;
+        padding-top: 18px;
+      }
+
+      .hero,
+      .workspace-card,
+      .overview-card,
+      .phase-card,
+      .empty-state {
+        padding: 20px;
+      }
+
+      .task-item {
+        grid-template-columns: 1fr;
+      }
+
+      .phase-metric,
+      .task-status {
+        text-align: left;
+        justify-self: start;
+      }
+
+      .inline-actions {
+        width: 100%;
+      }
+
+      .inline-actions .btn {
+        flex: 1 1 140px;
+      }
     }
   </style>
 </head>
 <body>
-<div class="app">
-  <h1>Client Onboarding Checklist</h1>
-  <div class="subtitle small">
-    Internal use only. Checklist ordered by actual onboarding workflow: Phase A (Access) → Phase B (Documents) → Phase C (Presentation & Compliance).
-  </div>
-
-  <!-- Client selector bar -->
-  <div class="client-bar">
-    <div class="client-left">
-      <div class="client-label-group">
-        <label for="clientSelect">Client:</label>
-        <select id="clientSelect"></select>
-      </div>
-      <button id="editClientBtn" class="btn btn-secondary" type="button">
-        ✏️ Rename
-      </button>
-      <button id="deleteClientBtn" class="btn btn-danger" type="button">
-        🗑 Delete
-      </button>
-    </div>
-
-    <div class="client-right">
-      <input
-        id="newClientInput"
-        type="text"
-        placeholder="Add new client (e.g. ACME Home Care)"
-      />
-      <button id="addClientBtn" class="btn btn-primary" type="button">
-        ＋ Add
-      </button>
-    </div>
-  </div>
-
-  <div class="summary-bar">
-    <div class="summary-header">
-      <div class="summary-title">Overall Progress</div>
-      <div class="summary-percent" id="overallText"></div>
-    </div>
-    <div class="progress">
-      <div class="progress-inner" id="overallBar"></div>
-    </div>
-  </div>
-
-  <!-- Dashboard card with accordion -->
-  <div class="summary-bar" id="dashboardCard">
-    <div class="summary-header dashboard-toggle" id="dashboardToggle">
-      <div class="summary-title">Client Dashboard</div>
-      <div class="summary-header-right">
-        <div class="summary-percent small" id="dashboardHint">
-          Overview of all clients and their completion.
+  <div class="page-shell">
+    <section class="hero" aria-labelledby="page-title">
+      <span class="eyebrow">Client onboarding</span>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1 id="page-title">A clearer path from kickoff to completion.</h1>
+          <p>
+            Track every setup item, requested document, and final review in one place. Each step is grouped in the order it is typically completed so your team always knows what is ready and what still needs attention.
+          </p>
         </div>
-        <button type="button" class="chevron-btn" aria-expanded="true">
-          <span id="dashboardChevron">▾</span>
-        </button>
+        <div class="hero-stats">
+          <article class="stat-card">
+            <div class="stat-label">Progress</div>
+            <div class="stat-value" id="heroProgressValue">No company selected</div>
+            <div class="stat-note" id="heroProgressNote">Choose an existing company or create a new workspace to begin.</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Current step</div>
+            <div class="stat-value" id="heroPhaseValue">Ready when you are</div>
+            <div class="stat-note" id="heroPhaseNote">Your checklist is organized into setup, documents, and final review.</div>
+          </article>
+        </div>
       </div>
-    </div>
-    <div id="dashboardContent">
-      <table class="dashboard-table">
-        <thead>
-          <tr>
-            <th>Client</th>
-            <th>Tasks Done</th>
-            <th>Completion</th>
-          </tr>
-        </thead>
-        <tbody id="dashboardBody">
-          <!-- Filled from JS -->
-        </tbody>
-      </table>
-    </div>
-  </div>
+    </section>
 
-  <div class="filters">
-    <span class="filter-label">Filter by person/role:</span>
-    <button class="chip active" data-role="all">
-      <span>All</span>
-    </button>
-    <button class="chip" data-role="I"><span>I</span>Internal</button>
-    <button class="chip" data-role="A"><span>A</span>Accounting</button>
-    <button class="chip" data-role="E"><span>E</span>External</button>
-    <button class="chip" data-role="HR"><span>HR</span>HR (TL/AE/AM)</button>
-    <button class="chip" data-role="B"><span>B</span>Both Int/Ext</button>
-    <button class="chip" data-role="C"><span>C</span>Compliance</button>
-    <button class="chip" data-role="S"><span>S</span>Siril</button>
-    <button class="chip" data-role="F"><span>F</span>Fon</button>
-    <button class="chip" data-role="M"><span>M</span>Modest</button>
-    <button class="chip" data-role="Imp"><span>Imp</span>Implementation</button>
-  </div>
+    <section class="top-grid">
+      <article class="surface-card workspace-card" aria-labelledby="workspace-title">
+        <div class="workspace-head">
+          <div>
+            <h2 class="section-title" id="workspace-title">Company workspace</h2>
+            <p class="section-copy">
+              Select the company you want to review, or create a new workspace for a fresh onboarding checklist.
+            </p>
+          </div>
+          <div class="save-note">Progress saves automatically</div>
+        </div>
 
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="sidebar-card">
-        <h2>How to use</h2>
-        <p>
-          Add or select a client above. Work from top to bottom. Phases A → B → C are ordered, but you can check any task at any time (no dependencies).
-          Progress is saved centrally on the server (shared by everyone).
+        <div class="workspace-grid">
+          <div class="field-group">
+            <label class="field-label" for="clientSelect">Company</label>
+            <select id="clientSelect" class="field-control" aria-label="Select company"></select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="newClientInput">Create a company workspace</label>
+            <input id="newClientInput" class="field-input" type="text" placeholder="Enter a company name" />
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Workspace actions</span>
+            <div class="inline-actions">
+              <button id="addClientBtn" class="btn btn-primary" type="button">Create workspace</button>
+              <button id="editClientBtn" class="btn btn-secondary" type="button">Rename</button>
+              <button id="deleteClientBtn" class="btn btn-danger" type="button">Remove</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="surface-card overview-card" aria-labelledby="guidance-title">
+        <h2 class="section-title" id="guidance-title">What to expect</h2>
+        <p class="section-copy">
+          This checklist follows a practical onboarding sequence so the essentials are handled first and final reviews happen once the foundation is in place.
         </p>
-        <p class="mt-2">
-          Use the role filter above to see what’s on your plate (e.g. Fon, Modest, HR, etc.). The dashboard shows all clients and their completion %.
-        </p>
-      </div>
-    </aside>
+        <ul class="guidance-list">
+          <li>Start with access, accounts, and system setup so the team can begin work without delays.</li>
+          <li>Use the document phase to confirm the records needed for bookkeeping, payroll, and compliance.</li>
+          <li>Finish with training, file reviews, and final materials so the engagement is fully ready to run.</li>
+        </ul>
+      </article>
+    </section>
 
-    <main class="main" id="phasesContainer">
-      <!-- Phases will be rendered here -->
-    </main>
+    <section class="overview-grid" aria-label="Progress overview">
+      <article class="surface-card overview-card">
+        <h2 class="section-title">Overall completion</h2>
+        <div class="overview-metric" id="overallText">Select a company to view progress</div>
+        <p class="overview-subcopy">A live view of completed items across the full onboarding checklist.</p>
+        <div class="progress-band" aria-hidden="true">
+          <div class="progress-inner" id="overallBar"></div>
+        </div>
+      </article>
+
+      <article class="surface-card overview-card">
+        <h2 class="section-title">Next best action</h2>
+        <div class="overview-metric" id="nextTaskTitle">Choose a company</div>
+        <p class="overview-subcopy" id="nextTaskDescription">Once a workspace is selected, the next incomplete item will appear here.</p>
+      </article>
+
+      <article class="surface-card overview-card">
+        <h2 class="section-title">Current step</h2>
+        <div class="overview-metric" id="currentPhaseText">No phase selected</div>
+        <p class="overview-subcopy" id="currentPhaseDescription">Your progress will update as each phase moves forward.</p>
+      </article>
+    </section>
+
+    <main id="phasesContainer" class="phases" aria-live="polite"></main>
   </div>
-</div>
+  <script>
+    const TASKS = [
+      { id: "A0", phase: "A", phaseTitle: "Access and setup", phaseOrder: 1, title: "Welcome and kickoff details", description: "Confirm that the welcome message, first steps, and primary points of contact have been shared.", roles: ["I", "Imp"] },
+      { id: "A1", phase: "A", phaseTitle: "Access and setup", phaseOrder: 1, title: "Shared file access", description: "Set up the shared folders needed for onboarding and confirm that everyone has access.", roles: ["I", "S"] },
+      { id: "A2", phase: "A", phaseTitle: "Access and setup", phaseOrder: 1, title: "QuickBooks access", description: "Confirm accounting access in QuickBooks Online so the team can review and begin setup.", roles: ["I", "M"] },
+      { id: "A12", phase: "A", phaseTitle: "Access and setup", phaseOrder: 1, title: "Chart of accounts review", description: "Review the chart of accounts structure, align on any changes, and finalize the setup in QuickBooks.", roles: ["I", "Imp"] },
+      { id: "A3", phase: "A", phaseTitle: "Access and setup", phaseOrder: 1, title: "Bank access", description: "Confirm the right level of banking access is in place for bookkeeping support.", roles: ["E", "F"] },
+      { id: "A4", phase: "A", phaseTitle: "Access and setup", phaseOrder: 1, title: "Secure identity access", description: "Prepare any required identity verification access and confirm the account is ready to use.", roles: ["E", "Imp"] },
+      { id: "A5", phase: "A", phaseTitle: "Access and setup", phaseOrder: 1, title: "Payroll platform setup", description: "Review the payroll environment, user access, and related settings needed for a clean launch.", roles: ["B", "Imp"] },
+      { id: "A6", phase: "A", phaseTitle: "Access and setup", phaseOrder: 1, title: "Time tracking review", description: "Confirm the current time and attendance approach and note any compliance or system needs.", roles: ["B", "Imp"] },
+      { id: "A7", phase: "A", phaseTitle: "Access and setup", phaseOrder: 1, title: "Retirement plan access", description: "Confirm provider access, plan details, and responsibilities for contributions or administration.", roles: ["B", "Imp"] },
+      { id: "A8", phase: "A", phaseTitle: "Access and setup", phaseOrder: 1, title: "Benefits portal or census", description: "Review benefits access or gather the details needed to prepare a health census.", roles: ["B", "Imp"] },
+      { id: "A9", phase: "A", phaseTitle: "Access and setup", phaseOrder: 1, title: "Tax account review", description: "Check tax setup details and payroll records to support accurate filings and employee setup.", roles: ["I", "C"] },
+      { id: "A10", phase: "A", phaseTitle: "Access and setup", phaseOrder: 1, title: "Point-of-sale review", description: "Confirm the current point-of-sale system and document any setup or filing considerations.", roles: ["I", "Imp"] },
+      { id: "A11", phase: "A", phaseTitle: "Access and setup", phaseOrder: 1, title: "E-signature setup", description: "Confirm the e-signature process and make sure the team has access to the selected tool.", roles: ["B", "M"] },
+      { id: "B3", phase: "A", phaseTitle: "Access and setup", phaseOrder: 1, title: "Revenue sources outline", description: "Capture the company's income sources so reporting and categorization can be structured correctly.", roles: ["E", "Imp"] },
+      { id: "B1", phase: "B", phaseTitle: "Documents and records", phaseOrder: 2, title: "SS-4 form", description: "Collect the employer identification letter and confirm the legal entity details on file.", roles: ["E", "Imp"] },
+      { id: "B2", phase: "B", phaseTitle: "Documents and records", phaseOrder: 2, title: "Prior-year tax returns", description: "Gather the latest personal and business tax returns to support continuity and planning.", roles: ["E", "Imp"] },
+      { id: "B4", phase: "B", phaseTitle: "Documents and records", phaseOrder: 2, title: "Insurance policies", description: "Collect workers' compensation, general liability, and any other active insurance policies.", roles: ["E", "Imp"] },
+      { id: "B5", phase: "B", phaseTitle: "Documents and records", phaseOrder: 2, title: "Benefits and leave policies", description: "Review PTO, retirement, holiday, and health policies so payroll and administration stay aligned.", roles: ["E", "Imp"] },
+      { id: "B6", phase: "B", phaseTitle: "Documents and records", phaseOrder: 2, title: "Loan and mortgage documents", description: "Collect current financing documents needed for an accurate balance sheet and planning review.", roles: ["E", "A"] },
+      { id: "B10", phase: "B", phaseTitle: "Documents and records", phaseOrder: 2, title: "Asset records", description: "Gather asset details so depreciation schedules and financial statement records can be completed.", roles: ["I", "Imp"] },
+      { id: "B7", phase: "B", phaseTitle: "Documents and records", phaseOrder: 2, title: "W-4 and I-9 records", description: "Confirm access to existing employee onboarding forms and identify any gaps that need to be resolved.", roles: ["E", "HR"] },
+      { id: "B8", phase: "B", phaseTitle: "Documents and records", phaseOrder: 2, title: "Employee handbook materials", description: "Collect the handbook questionnaire and any current policy documents to support the first draft.", roles: ["E", "HR"] },
+      { id: "B9", phase: "B", phaseTitle: "Documents and records", phaseOrder: 2, title: "Employment forms", description: "Gather offer letters, agreements, job descriptions, and related hiring documents for review.", roles: ["E", "HR"] },
+      { id: "C8", phase: "C", phaseTitle: "Final review and handoff", phaseOrder: 3, title: "Meeting summaries", description: "Save meeting notes in the shared workspace so onboarding decisions are easy to reference later.", roles: ["I", "Imp"] },
+      { id: "C1", phase: "C", phaseTitle: "Final review and handoff", phaseOrder: 3, title: "Shared folder walkthrough", description: "Review the shared folder structure and confirm where important files should be stored going forward.", roles: ["E", "Imp"] },
+      { id: "C2", phase: "C", phaseTitle: "Final review and handoff", phaseOrder: 3, title: "Compliance materials review", description: "Review the compliance resources that apply to the business and note any immediate updates needed.", roles: ["E", "Imp"] },
+      { id: "C3", phase: "C", phaseTitle: "Final review and handoff", phaseOrder: 3, title: "Accounting workflow review", description: "Align on the accounting routines, expectations, and habits that will support ongoing service.", roles: ["E", "Imp"] },
+      { id: "C4", phase: "C", phaseTitle: "Final review and handoff", phaseOrder: 3, title: "Employee onboarding packet", description: "Finalize the onboarding documents employees will complete and confirm the rollout approach.", roles: ["E", "Imp"] },
+      { id: "C5", phase: "C", phaseTitle: "Final review and handoff", phaseOrder: 3, title: "Reference guides", description: "Share the practical guides and confirm the team knows when and how to use them.", roles: ["E", "Imp"] },
+      { id: "C6", phase: "C", phaseTitle: "Final review and handoff", phaseOrder: 3, title: "Organizational chart", description: "Document the company structure and confirm the current roles and reporting lines.", roles: ["E", "Imp"] },
+      { id: "C7", phase: "C", phaseTitle: "Final review and handoff", phaseOrder: 3, title: "Reports review", description: "Review the key reports and trackers that will be used to monitor progress after onboarding.", roles: ["E", "Imp"] }
+    ];
 
-<script>
-  // ====== CONFIG & DATA ======
+    const PHASE_DETAILS = {
+      A: { step: "Step 1", description: "Start by confirming access, financial systems, payroll tools, and the core setup items needed to begin work." },
+      B: { step: "Step 2", description: "Gather the records and source documents that support bookkeeping, payroll, and compliance setup." },
+      C: { step: "Step 3", description: "Close the onboarding process with final walkthroughs, file reviews, and handoff materials." }
+    };
 
-  const ROLE_LABELS = {
-    I: "Internal",
-    A: "Accounting Dept",
-    E: "External",
-    HR: "HR (TL/AE/AM)",
-    B: "Both Internal & External",
-    C: "Compliance",
-    S: "Siril",
-    F: "Fon",
-    M: "Modest",
-    Imp: "Implementation Specialist"
-  };
+    let currentClientId = null;
+    let currentClientName = "";
+    let currentState = {};
+    let clientsCache = [];
 
-  const TASKS = [
-    // ---- Phase A ----
-    { id: "A0", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
-      title: "Welcome Email",
-      description: "Send out welcome email to the client.",
-      roles: ["I", "Imp"], dependsOn: [] },
-
-    { id: "A1", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
-      title: "WorkDrive & SharePoint Setup",
-      description: "Create SharePoint folder, create WorkDrive folder, provide client with access, confirm access.",
-      roles: ["I", "S"], dependsOn: [] },
-
-    { id: "A2", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
-      title: "QBO Access",
-      description: "Confirm firm access, assign associates, verify access.",
-      roles: ["I", "M"], dependsOn: [] },
-
-    { id: "A12", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
-      title: "Chart of Accounts",
-      description: "Present the Sparing standard chart of accounts to the client. Review the structure with the client and address all questions or suggestions. Set up and implement the chart of accounts in QBO.",
-      roles: ["I", "Imp"], dependsOn: [] },
-
-    { id: "A3", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
-      title: "Bank Account Access",
-      description: "Confirm bank allows accountant access, Fon creates accountant access, verify access.",
-      roles: ["E", "F"], dependsOn: [] },
-    { id: "A4", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
-      title: "ID.me Setup",
-      description: "Access client’s ID.me, create account if needed, store details securely.",
-      roles: ["E", "Imp"], dependsOn: [] },
-    { id: "A5", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
-      title: "ADP Setup",
-      description: "Verify client in Accountant Connect, add AM/TL/AE as users, configure GLI, review S-Corp payroll, check HR tools & benefits, introduce ADP rep.",
-      roles: ["B", "Imp"], dependsOn: [] },
-    { id: "A6", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
-      title: "Time & Attendance System Review",
-      description: "Identify current tool, train internal team, determine EVV compliance, explore ADP options if needed.",
-      roles: ["B", "Imp"], dependsOn: [] },
-    { id: "A7", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
-      title: "Retirement Portal Access",
-      description: "Confirm provider, obtain access, review plan type, note contribution responsibilities.",
-      roles: ["B", "Imp"], dependsOn: [] },
-    { id: "A8", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
-      title: "Health Portal Access / Health Census",
-      description: "Confirm insurance plan and obtain portal access, review enrollment process or prepare health census if needed.",
-      roles: ["B", "Imp"], dependsOn: [] },
-    { id: "A9", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
-      title: "Tax Account Setup",
-      description: "Validate SIT & SUI setups, review ADP employee roster (addresses, jurisdictions, names, SSNs, DOB), correct discrepancies.",
-      roles: ["I", "C"], dependsOn: [] },
-    { id: "A10", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
-      title: "POS System Review",
-      description: "Identify POS, recommend Clover with ADP if savings exist, determine sales tax filing responsibility and setup if firm handles filings.",
-      roles: ["I", "Imp"], dependsOn: [] },
-    { id: "A11", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
-      title: "Adobe Sign Setup",
-      description: "Confirm existing e-signature tools, recommend Adobe Sign if needed, set up and assign access.",
-      roles: ["B", "M"], dependsOn: [] },
-
-    { id: "B3", phase: "A", phaseTitle: "A. Account Setup & Access (FIRST PRIORITY)", phaseOrder: 1,
-      title: "Outline of All Income Sources",
-      description: "Request list of all income sources and use as categorization framework.",
-      roles: ["E", "Imp"], dependsOn: [] },
-
-    // ---- Phase B ----
-    { id: "B1", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
-      title: "SS-4 Form",
-      description: "Request SS-4; review IRS entity instructions.",
-      roles: ["E", "Imp"], dependsOn: [] },
-    { id: "B2", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
-      title: "Previous Year Personal & Business Taxes",
-      description: "Request prior-year tax returns and review for structure, filing status, and income.",
-      roles: ["E", "Imp"], dependsOn: [] },
-    { id: "B4", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
-      title: "Insurance Policies",
-      description: "Collect Workers’ Comp, General Liability, and other relevant policies.",
-      roles: ["E", "Imp"], dependsOn: [] },
-    { id: "B5", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
-      title: "Policies: PTO, Retirement, Health, Holiday",
-      description: "Review all policies, determine eligibility rules, educate client if nothing exists, ensure payroll accruals/contributions align.",
-      roles: ["E", "Imp"], dependsOn: [] },
-    { id: "B6", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
-      title: "Loan & Mortgage Documentation",
-      description: "Request loan & mortgage docs; use for balance sheet accuracy and planning.",
-      roles: ["E", "A"], dependsOn: [] },
-
-    { id: "B10", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
-      title: "Assets",
-      description: "Gather information on all assets owned by the client. Complete the asset detail sheet and prepare the depreciation schedule. Record and implement the assets and depreciation in the financial statements.",
-      roles: ["I", "Imp"], dependsOn: [] },
-
-    { id: "B7", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
-      title: "W-4 and I-9 Access",
-      description: "Collect existing W-4s and I-9s, explore digital tools or ADP I-9 feature, use Adobe Sign if necessary.",
-      roles: ["E", "HR"], dependsOn: [] },
-    { id: "B8", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
-      title: "Employee Handbook Questionnaire",
-      description: "Collect questionnaire and existing handbook, reconcile with ADP Handbook Wizard, prepare first version.",
-      roles: ["E", "HR"], dependsOn: [] },
-    { id: "B9", phase: "B", phaseTitle: "B. Documents to Collect from Client (SECOND PHASE)", phaseOrder: 2,
-      title: "Employment Forms",
-      description: "Collect job descriptions, offer letters, employee and contractor agreements, and identify improvements.",
-      roles: ["E", "HR"], dependsOn: [] },
-
-    // ---- Phase C ----
-    { id: "C8", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
-      title: "Meeting Notes",
-      description: "Document all meeting notes and save them in WorkDrive.",
-      roles: ["I", "Imp"], dependsOn: [] },
-
-    { id: "C1", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
-      title: "WorkDrive Usage & Folder Structure",
-      description: "Train client on folder structure, confirm portal usage, encourage bookmarking.",
-      roles: ["E", "Imp"], dependsOn: [] },
-    { id: "C2", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
-      title: "Compliance Folder Review",
-      description: "Present compliance folder (minimum wage, overtime, retirement mandates, PTO, PFML, workers’ comp, FLSA thresholds, posters). Educate and identify improvements.",
-      roles: ["E", "Imp"], dependsOn: [] },
-    { id: "C3", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
-      title: "Accounting Best Practices",
-      description: "Present accounting SOPs, review habits and workflows, align expectations.",
-      roles: ["E", "Imp"], dependsOn: [] },
-    { id: "C4", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
-      title: "Employee Onboarding Documents",
-      description: "Present onboarding packet, agree on what employees must sign, finalize onboarding process.",
-      roles: ["E", "Imp"], dependsOn: [] },
-    { id: "C5", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
-      title: "Job Aids",
-      description: "Provide job aids and confirm understanding.",
-      roles: ["E", "Imp"], dependsOn: [] },
-    { id: "C6", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
-      title: "Organizational Chart",
-      description: "Prepare org chart and confirm roles and reporting lines.",
-      roles: ["E", "Imp"], dependsOn: [] },
-    { id: "C7", phase: "C", phaseTitle: "C. Presentation of Files, Best Practices & Compliance (FINAL PHASE)", phaseOrder: 3,
-      title: "Reports Review",
-      description: "Review Weekly Accomplishments, Daily Visits, Payroll Analysis, and Savings Tracker with client.",
-      roles: ["E", "Imp"], dependsOn: [] }
-  ];
-
-  // ====== STATE (front-end) ======
-
-  let currentClientId = null;
-  let currentClientName = "";
-  let currentState = {};          // { taskId: true/false }
-  let clientsCache = [];          // [{id, name}]
-  let currentRoleFilter = "all";
-
-  // ====== HELPERS ======
-
-  async function apiGet(path) {
-    const res = await fetch(path);
-    if (!res.ok) throw new Error("GET " + path + " failed");
-    return res.json();
-  }
-
-  async function apiPost(path, data) {
-    const res = await fetch(path, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data || {})
-    });
-    if (!res.ok) throw new Error("POST " + path + " failed");
-    return res.json();
-  }
-
-  async function apiPut(path, data) {
-    const res = await fetch(path, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data || {})
-    });
-    if (!res.ok) throw new Error("PUT " + path + " failed");
-    return res.json();
-  }
-
-  async function apiDelete(path) {
-    const res = await fetch(path, { method: "DELETE" });
-    if (!res.ok) throw new Error("DELETE " + path + " failed");
-    return res.json();
-  }
-
-  function getPhases() {
-    const map = {};
-    for (const task of TASKS) {
-      if (!map[task.phase]) {
-        map[task.phase] = {
-          id: task.phase,
-          title: task.phaseTitle,
-          order: task.phaseOrder,
-          tasks: []
-        };
-      }
-      map[task.phase].tasks.push(task);
+    async function apiGet(path) {
+      const res = await fetch(path);
+      if (!res.ok) throw new Error("GET " + path + " failed");
+      return res.json();
     }
-    return Object.values(map).sort((a, b) => a.order - b.order);
-  }
 
-  function computeCompletion(state) {
-    const total = TASKS.length;
-    const done = TASKS.filter(t => state[t.id]).length;
-    const percent = total === 0 ? 0 : Math.round((done / total) * 100);
-    return { total, done, percent };
-  }
-
-  function isTaskEnabled(task, state) {
-    // Dependencies removed: all tasks always enabled
-    return true;
-  }
-
-  // ====== RENDERING ======
-
-  function render(role = currentRoleFilter) {
-    currentRoleFilter = role;
-    const phasesContainer = document.getElementById("phasesContainer");
-    const phases = getPhases();
-    const { total, done, percent } = computeCompletion(currentState);
-
-    const overallText = document.getElementById("overallText");
-    const overallBar = document.getElementById("overallBar");
-
-    if (currentClientId) {
-      overallText.textContent =
-        `${done} of ${total} tasks completed (${percent}%) – ${currentClientName}`;
-    } else {
-      overallText.textContent = "No client selected yet. Add a client above to begin.";
+    async function apiPost(path, data) {
+      const res = await fetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data || {})
+      });
+      if (!res.ok) throw new Error("POST " + path + " failed");
+      return res.json();
     }
-    overallBar.style.width = percent + "%";
 
-    phasesContainer.innerHTML = "";
+    async function apiPut(path, data) {
+      const res = await fetch(path, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data || {})
+      });
+      if (!res.ok) throw new Error("PUT " + path + " failed");
+      return res.json();
+    }
 
-    if (!currentClientId) return;
+    async function apiDelete(path) {
+      const res = await fetch(path, { method: "DELETE" });
+      if (!res.ok) throw new Error("DELETE " + path + " failed");
+      return res.json();
+    }
 
-    phases.forEach(phase => {
-      const phaseTasks = phase.tasks;
-      const totalPhase = phaseTasks.length;
-      const donePhase = phaseTasks.filter(t => currentState[t.id]).length;
-      const phasePercent = totalPhase === 0 ? 0 : Math.round((donePhase / totalPhase) * 100);
-
-      const phaseCard = document.createElement("section");
-      phaseCard.className = "phase-card";
-
-      const header = document.createElement("div");
-      header.className = "phase-header";
-
-      const titleWrap = document.createElement("div");
-      const titleEl = document.createElement("div");
-      titleEl.className = "phase-title";
-      titleEl.textContent = phase.title;
-      const subtitle = document.createElement("div");
-      subtitle.className = "phase-subtitle";
-      if (phase.id === "A") {
-        subtitle.textContent = "Foundation: access, payroll, portals & core systems.";
-      } else if (phase.id === "B") {
-        subtitle.textContent = "Collect all documents and data from client.";
-      } else if (phase.id === "C") {
-        subtitle.textContent = "Present structure, best practices, and compliance to client.";
+    function getPhases() {
+      const map = {};
+      for (const task of TASKS) {
+        if (!map[task.phase]) {
+          map[task.phase] = { id: task.phase, title: task.phaseTitle, order: task.phaseOrder, tasks: [] };
+        }
+        map[task.phase].tasks.push(task);
       }
-      titleWrap.appendChild(titleEl);
-      titleWrap.appendChild(subtitle);
+      return Object.values(map).sort((a, b) => a.order - b.order);
+    }
 
-      const phaseProg = document.createElement("div");
-      phaseProg.className = "phase-progress";
-      phaseProg.innerHTML = `<strong>${donePhase}/${totalPhase}</strong> (${phasePercent}%)`;
+    function computeCompletion(state) {
+      const total = TASKS.length;
+      const done = TASKS.filter((task) => state[task.id]).length;
+      const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+      return { total, done, percent };
+    }
 
-      header.appendChild(titleWrap);
-      header.appendChild(phaseProg);
+    function getNextIncompleteTask(state) {
+      return TASKS.find((task) => !state[task.id]) || null;
+    }
 
-      const bar = document.createElement("div");
-      bar.className = "progress mt-1";
-      const inner = document.createElement("div");
-      inner.className = "progress-inner";
-      inner.style.width = phasePercent + "%";
-      bar.appendChild(inner);
+    function getCurrentPhase(state) {
+      const phases = getPhases();
+      return phases.find((phase) => phase.tasks.some((task) => !state[task.id])) || phases[phases.length - 1] || null;
+    }
 
-      const list = document.createElement("ul");
-      list.className = "task-list";
+    function updateOverview() {
+      const overallText = document.getElementById("overallText");
+      const overallBar = document.getElementById("overallBar");
+      const heroProgressValue = document.getElementById("heroProgressValue");
+      const heroProgressNote = document.getElementById("heroProgressNote");
+      const heroPhaseValue = document.getElementById("heroPhaseValue");
+      const heroPhaseNote = document.getElementById("heroPhaseNote");
+      const nextTaskTitle = document.getElementById("nextTaskTitle");
+      const nextTaskDescription = document.getElementById("nextTaskDescription");
+      const currentPhaseText = document.getElementById("currentPhaseText");
+      const currentPhaseDescription = document.getElementById("currentPhaseDescription");
 
-      phaseTasks.forEach(task => {
-        if (role !== "all" && !task.roles.includes(role)) {
+      if (!currentClientId) {
+        overallText.textContent = "Select a company to view progress";
+        overallBar.style.width = "0%";
+        heroProgressValue.textContent = "No company selected";
+        heroProgressNote.textContent = "Choose an existing company or create a new workspace to begin.";
+        heroPhaseValue.textContent = "Ready when you are";
+        heroPhaseNote.textContent = "Your checklist is organized into setup, documents, and final review.";
+        nextTaskTitle.textContent = "Choose a company";
+        nextTaskDescription.textContent = "Once a workspace is selected, the next incomplete item will appear here.";
+        currentPhaseText.textContent = "No phase selected";
+        currentPhaseDescription.textContent = "Your progress will update as each phase moves forward.";
+        return;
+      }
+
+      const { total, done, percent } = computeCompletion(currentState);
+      const nextTask = getNextIncompleteTask(currentState);
+      const currentPhase = getCurrentPhase(currentState);
+      const currentPhaseDetail = currentPhase ? PHASE_DETAILS[currentPhase.id] : null;
+
+      overallText.textContent = `${done} of ${total} items complete`;
+      overallBar.style.width = percent + "%";
+      heroProgressValue.textContent = `${percent}% complete`;
+      heroProgressNote.textContent = currentClientName || "Current workspace";
+
+      if (currentPhase && currentPhaseDetail) {
+        heroPhaseValue.textContent = `${currentPhaseDetail.step}: ${currentPhase.title}`;
+        heroPhaseNote.textContent = currentPhaseDetail.description;
+        currentPhaseText.textContent = `${currentPhaseDetail.step}: ${currentPhase.title}`;
+        currentPhaseDescription.textContent = currentPhaseDetail.description;
+      } else {
+        heroPhaseValue.textContent = "All steps complete";
+        heroPhaseNote.textContent = "Every item in this onboarding checklist has been completed.";
+        currentPhaseText.textContent = "All steps complete";
+        currentPhaseDescription.textContent = "Every item in this onboarding checklist has been completed.";
+      }
+
+      if (nextTask) {
+        nextTaskTitle.textContent = nextTask.title;
+        nextTaskDescription.textContent = nextTask.description;
+      } else {
+        nextTaskTitle.textContent = "Checklist complete";
+        nextTaskDescription.textContent = "Every onboarding item for this company has been marked complete.";
+      }
+    }
+
+    function render() {
+      const phasesContainer = document.getElementById("phasesContainer");
+      const phases = getPhases();
+
+      updateOverview();
+      phasesContainer.innerHTML = "";
+
+      if (!currentClientId) {
+        const empty = document.createElement("section");
+        empty.className = "surface-card empty-state";
+        empty.innerHTML = "<h2>Start with a company workspace</h2><p>Select a company above or create a new workspace to open the onboarding checklist and begin tracking progress.</p>";
+        phasesContainer.appendChild(empty);
+        return;
+      }
+
+      phases.forEach((phase) => {
+        const totalPhase = phase.tasks.length;
+        const donePhase = phase.tasks.filter((task) => currentState[task.id]).length;
+        const phasePercent = totalPhase === 0 ? 0 : Math.round((donePhase / totalPhase) * 100);
+        const detail = PHASE_DETAILS[phase.id];
+
+        const phaseCard = document.createElement("section");
+        phaseCard.className = "phase-card";
+
+        const phaseHead = document.createElement("div");
+        phaseHead.className = "phase-head";
+
+        const phaseIntro = document.createElement("div");
+        phaseIntro.innerHTML = `
+          <div class="phase-label">
+            <span class="phase-badge">${detail ? detail.step.replace("Step ", "") : phase.order}</span>
+            ${detail ? detail.step : "Step"}
+          </div>
+          <h2 class="phase-title">${phase.title}</h2>
+          <p class="phase-copy">${detail ? detail.description : ""}</p>
+        `;
+
+        const phaseMetric = document.createElement("div");
+        phaseMetric.className = "phase-metric";
+        phaseMetric.innerHTML = `<strong>${donePhase}/${totalPhase}</strong><span>${phasePercent}% complete</span>`;
+
+        const bar = document.createElement("div");
+        bar.className = "progress-band";
+        const inner = document.createElement("div");
+        inner.className = "progress-inner";
+        inner.style.width = phasePercent + "%";
+        bar.appendChild(inner);
+
+        const list = document.createElement("ul");
+        list.className = "task-list";
+
+        phase.tasks.forEach((task) => {
+          const li = document.createElement("li");
+          li.className = "task-item" + (currentState[task.id] ? " completed" : "");
+
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.className = "task-check";
+          checkbox.checked = !!currentState[task.id];
+          checkbox.setAttribute("aria-label", task.title);
+
+          checkbox.addEventListener("change", async () => {
+            currentState[task.id] = checkbox.checked;
+            try {
+              await apiPut(`/api/clients/${encodeURIComponent(currentClientId)}/state`, currentState);
+              render();
+            } catch (error) {
+              console.error(error);
+            }
+          });
+
+          const body = document.createElement("div");
+          const title = document.createElement("h3");
+          title.className = "task-title";
+          title.textContent = task.title;
+
+          const description = document.createElement("p");
+          description.className = "task-description";
+          description.textContent = task.description;
+
+          body.appendChild(title);
+          body.appendChild(description);
+
+          const status = document.createElement("div");
+          status.className = "task-status";
+          status.textContent = currentState[task.id] ? "Completed" : "Open";
+
+          li.appendChild(checkbox);
+          li.appendChild(body);
+          li.appendChild(status);
+          list.appendChild(li);
+        });
+
+        phaseHead.appendChild(phaseIntro);
+        phaseHead.appendChild(phaseMetric);
+        phaseCard.appendChild(phaseHead);
+        phaseCard.appendChild(bar);
+        phaseCard.appendChild(list);
+        phasesContainer.appendChild(phaseCard);
+      });
+    }
+
+    async function setupClientsUI() {
+      const select = document.getElementById("clientSelect");
+      const input = document.getElementById("newClientInput");
+      const addBtn = document.getElementById("addClientBtn");
+      const editBtn = document.getElementById("editClientBtn");
+      const deleteBtn = document.getElementById("deleteClientBtn");
+
+      async function loadClients() {
+        try {
+          clientsCache = await apiGet("/api/clients");
+        } catch (error) {
+          console.error(error);
+          clientsCache = [];
+        }
+      }
+
+      function populateSelect() {
+        select.innerHTML = "";
+
+        if (clientsCache.length === 0) {
+          const option = document.createElement("option");
+          option.value = "";
+          option.textContent = "No company workspaces yet";
+          select.appendChild(option);
+          currentClientId = null;
+          currentClientName = "";
           return;
         }
 
-        const enabled = isTaskEnabled(task, currentState);
-        const li = document.createElement("li");
-        li.className = "task" + (enabled ? "" : " disabled");
-
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.className = "task-checkbox";
-        checkbox.checked = !!currentState[task.id];
-        checkbox.disabled = !enabled;
-
-        checkbox.addEventListener("change", async () => {
-          currentState[task.id] = checkbox.checked;
-          if (currentClientId) {
-            try {
-              await apiPut(`/api/clients/${encodeURIComponent(currentClientId)}/state`, currentState);
-              render(role);
-              refreshDashboard();
-            } catch (e) {
-              console.error(e);
-            }
-          }
+        clientsCache.forEach((client) => {
+          const option = document.createElement("option");
+          option.value = client.id;
+          option.textContent = client.name;
+          select.appendChild(option);
         });
 
-        const left = document.createElement("div");
-        left.appendChild(checkbox);
-
-        const main = document.createElement("div");
-        main.className = "task-main";
-
-        const title = document.createElement("div");
-        title.className = "task-title";
-        title.textContent = task.title;
-
-        const description = document.createElement("div");
-        description.className = "task-description";
-        description.textContent = task.description;
-
-        const meta = document.createElement("div");
-        meta.className = "task-meta";
-
-        task.roles.forEach(code => {
-          const pill = document.createElement("span");
-          pill.className = "pill";
-          const label = ROLE_LABELS[code] || code;
-          pill.textContent = code + " – " + label;
-          meta.appendChild(pill);
-        });
-
-        main.appendChild(title);
-        main.appendChild(description);
-        main.appendChild(meta);
-
-        li.appendChild(left);
-        li.appendChild(main);
-
-        list.appendChild(li);
-      });
-
-      phaseCard.appendChild(header);
-      phaseCard.appendChild(bar);
-      phaseCard.appendChild(list);
-      phasesContainer.appendChild(phaseCard);
-    });
-  }
-
-  async function refreshDashboard() {
-    const tbody = document.getElementById("dashboardBody");
-    tbody.innerHTML = "";
-
-    if (!clientsCache || clientsCache.length === 0) {
-      const tr = document.createElement("tr");
-      const td = document.createElement("td");
-      td.colSpan = 3;
-      td.textContent = "No clients yet.";
-      tr.appendChild(td);
-      tbody.appendChild(tr);
-      return;
-    }
-
-    const rows = await Promise.all(
-      clientsCache.map(async (client) => {
-        try {
-          const state = await apiGet(`/api/clients/${encodeURIComponent(client.id)}/state`);
-          const { total, done, percent } = computeCompletion(state || {});
-          return { client, total, done, percent };
-        } catch (e) {
-          console.error(e);
-          return { client, total: TASKS.length, done: 0, percent: 0 };
-        }
-      })
-    );
-
-    rows.forEach(row => {
-      const tr = document.createElement("tr");
-
-      const nameTd = document.createElement("td");
-      nameTd.textContent = row.client.name;
-
-      const doneTd = document.createElement("td");
-      doneTd.textContent = `${row.done}/${row.total}`;
-
-      const pctTd = document.createElement("td");
-      pctTd.textContent = `${row.percent}%`;
-
-      tr.appendChild(nameTd);
-      tr.appendChild(doneTd);
-      tr.appendChild(pctTd);
-      tbody.appendChild(tr);
-    });
-  }
-
-  // ====== UI SETUP ======
-
-  function setupFilters() {
-    const chips = document.querySelectorAll(".chip");
-    chips.forEach(chip => {
-      chip.addEventListener("click", () => {
-        chips.forEach(c => c.classList.remove("active"));
-        chip.classList.add("active");
-        const role = chip.getAttribute("data-role");
-        render(role);
-      });
-    });
-  }
-
-  function setupDashboardToggle() {
-    const toggle = document.getElementById("dashboardToggle");
-    const content = document.getElementById("dashboardContent");
-    const chevron = document.getElementById("dashboardChevron");
-
-    let open = true;
-
-    const applyState = () => {
-      content.style.display = open ? "block" : "none";
-      chevron.textContent = open ? "▾" : "▸";
-    };
-
-    applyState();
-
-    toggle.addEventListener("click", () => {
-      open = !open;
-      applyState();
-    });
-  }
-
-  async function setupClientsUI() {
-    const select = document.getElementById("clientSelect");
-    const input = document.getElementById("newClientInput");
-    const addBtn = document.getElementById("addClientBtn");
-    const editBtn = document.getElementById("editClientBtn");
-    const deleteBtn = document.getElementById("deleteClientBtn");
-
-    async function loadClients() {
-      try {
-        const clients = await apiGet("/api/clients");
-        clientsCache = clients;
-      } catch (e) {
-        console.error(e);
-        clientsCache = [];
-      }
-    }
-
-    function populateSelect() {
-      select.innerHTML = "";
-
-      if (!clientsCache || clientsCache.length === 0) {
-        const opt = document.createElement("option");
-        opt.value = "";
-        opt.textContent = "No clients yet";
-        select.appendChild(opt);
-        currentClientId = null;
-        currentClientName = "";
-        return;
-      }
-
-      clientsCache.forEach(c => {
-        const opt = document.createElement("option");
-        opt.value = c.id;
-        opt.textContent = c.name;
-        select.appendChild(opt);
-      });
-
-      if (!currentClientId || !clientsCache.find(c => c.id === currentClientId)) {
-        currentClientId = clientsCache[0].id;
-        currentClientName = clientsCache[0].name;
-      }
-
-      select.value = currentClientId;
-    }
-
-    async function loadStateForCurrentClient() {
-      if (!currentClientId) {
-        currentState = {};
-        render();
-        return;
-      }
-      try {
-        const state = await apiGet(`/api/clients/${encodeURIComponent(currentClientId)}/state`);
-        currentState = state || {};
-      } catch (e) {
-        console.error(e);
-        currentState = {};
-      }
-      render();
-    }
-
-    select.addEventListener("change", async () => {
-      const id = select.value;
-      const client = clientsCache.find(c => c.id === id);
-      currentClientId = client ? client.id : null;
-      currentClientName = client ? client.name : "";
-      await loadStateForCurrentClient();
-    });
-
-    addBtn.addEventListener("click", async () => {
-      const name = input.value.trim();
-      if (!name) return;
-      try {
-        const created = await apiPost("/api/clients", { name });
-        input.value = "";
-        await loadClients();
-        currentClientId = created.id;
-        currentClientName = created.name;
-        populateSelect();
-        await loadStateForCurrentClient();
-        await refreshDashboard();
-      } catch (e) {
-        console.error(e);
-      }
-    });
-
-    editBtn.addEventListener("click", async () => {
-      if (!currentClientId) return;
-      const newName = prompt("Edit client name:", currentClientName || "");
-      if (!newName) return;
-      const trimmed = newName.trim();
-      if (!trimmed) return;
-
-      try {
-        const updated = await apiPut(
-          `/api/clients/${encodeURIComponent(currentClientId)}`,
-          { name: trimmed }
-        );
-        await loadClients();
-        currentClientId = updated.id;
-        currentClientName = updated.name;
-        populateSelect();
-        await loadStateForCurrentClient();
-        await refreshDashboard();
-      } catch (e) {
-        console.error(e);
-      }
-    });
-
-    deleteBtn.addEventListener("click", async () => {
-      if (!currentClientId) return;
-      const confirmDelete = confirm(
-        `Delete client "${currentClientName}" and all its checklist data?`
-      );
-      if (!confirmDelete) return;
-
-      try {
-        await apiDelete(`/api/clients/${encodeURIComponent(currentClientId)}`);
-        await loadClients();
-        if (clientsCache.length > 0) {
+        if (!currentClientId || !clientsCache.find((client) => client.id === currentClientId)) {
           currentClientId = clientsCache[0].id;
           currentClientName = clientsCache[0].name;
+        }
+
+        select.value = currentClientId;
+      }
+
+      async function loadStateForCurrentClient() {
+        if (!currentClientId) {
+          currentState = {};
+          render();
+          return;
+        }
+
+        try {
+          currentState = await apiGet(`/api/clients/${encodeURIComponent(currentClientId)}/state`);
+        } catch (error) {
+          console.error(error);
+          currentState = {};
+        }
+
+        render();
+      }
+
+      select.addEventListener("change", async () => {
+        const client = clientsCache.find((item) => item.id === select.value);
+        currentClientId = client ? client.id : null;
+        currentClientName = client ? client.name : "";
+        await loadStateForCurrentClient();
+      });
+
+      addBtn.addEventListener("click", async () => {
+        const name = input.value.trim();
+        if (!name) return;
+
+        try {
+          const created = await apiPost("/api/clients", { name });
+          input.value = "";
+          await loadClients();
+          currentClientId = created.id;
+          currentClientName = created.name;
           populateSelect();
           await loadStateForCurrentClient();
-        } else {
-          currentClientId = null;
-          currentClientName = "";
-          currentState = {};
-          populateSelect();
-          render();
+        } catch (error) {
+          console.error(error);
         }
-        await refreshDashboard();
-      } catch (e) {
-        console.error(e);
-      }
+      });
+
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          addBtn.click();
+        }
+      });
+
+      editBtn.addEventListener("click", async () => {
+        if (!currentClientId) return;
+
+        const newName = prompt("Rename company workspace:", currentClientName || "");
+        if (!newName) return;
+
+        const trimmed = newName.trim();
+        if (!trimmed) return;
+
+        try {
+          const updated = await apiPut(`/api/clients/${encodeURIComponent(currentClientId)}`, { name: trimmed });
+          await loadClients();
+          currentClientId = updated.id;
+          currentClientName = updated.name;
+          populateSelect();
+          await loadStateForCurrentClient();
+        } catch (error) {
+          console.error(error);
+        }
+      });
+
+      deleteBtn.addEventListener("click", async () => {
+        if (!currentClientId) return;
+
+        const confirmDelete = confirm(`Remove "${currentClientName}" and its saved checklist progress?`);
+        if (!confirmDelete) return;
+
+        try {
+          await apiDelete(`/api/clients/${encodeURIComponent(currentClientId)}`);
+          await loadClients();
+
+          if (clientsCache.length > 0) {
+            currentClientId = clientsCache[0].id;
+            currentClientName = clientsCache[0].name;
+            populateSelect();
+            await loadStateForCurrentClient();
+          } else {
+            currentClientId = null;
+            currentClientName = "";
+            currentState = {};
+            populateSelect();
+            render();
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      });
+
+      await loadClients();
+      populateSelect();
+      await loadStateForCurrentClient();
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      render();
+      await setupClientsUI();
     });
-
-    // Initial load
-    await loadClients();
-
-    // If no clients at all, create a demo one
-    if (!clientsCache || clientsCache.length === 0) {
-      try {
-        const demo = await apiPost("/api/clients", { name: "Demo Client" });
-        clientsCache = [demo];
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
-    // Final refresh after possible demo creation
-    await loadClients();
-    if (clientsCache.length > 0) {
-      currentClientId = clientsCache[0].id;
-      currentClientName = clientsCache[0].name;
-    }
-    populateSelect();
-    await loadStateForCurrentClient();
-    await refreshDashboard();
-  }
-
-  document.addEventListener("DOMContentLoaded", async () => {
-    setupFilters();
-    setupDashboardToggle();
-    await setupClientsUI();
-  });
-</script>
+  </script>
 </body>
 </html>
